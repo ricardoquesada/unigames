@@ -40,7 +40,8 @@ class UnicycleSprite(pygame.sprite.Sprite):
 class JoustGame(Scene):
     
     def init(self):
-        self._background = pygame.image.load("data/background_joust.png").convert()
+#        self._background = pygame.image.load("data/background_joust.png").convert()
+        self._background = pygame.image.load("data/TerrainMain.jpg").convert()
         self.unicycle_joust = UnicycleSprite( (0,200))
         self.joust = JoustSprite( (0,200))
 
