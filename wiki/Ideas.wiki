@@ -2,9 +2,11 @@
 
 = Introduction =
 
-Add your content here.
+The idea is to make a sort of olympics games oriented to the unicycle.
+The selected games could be the ones that are played in the "unicons"
+http://en.wikipedia.org/wiki/UNICON
 
-
+The idea is to have a "retro" look in the game. Python using pygame will be used.
 = Details =
 
 Add your content here.  Format your content with:
