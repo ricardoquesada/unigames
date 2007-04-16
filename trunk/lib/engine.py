@@ -26,14 +26,32 @@ class Game:
         pygame.mixer.set_reserved(3)
         self.framerate = framerate   
         self.clock = pygame.time.Clock()
+        self.quit = False
         
-    def run(self, scene):
-        scene.run( )
-        if DEBUG: print "FPS:", self.clock.get_fps()
-        
-    def tick(self):
-        self.clock.tick(self.framerate)
+    def change_scene(self, new_scene):
+        self.scene = new_scene
 
+    def main_loop(self):
+        while not self.quit:
+            self._update_event()
+            dt = self.clock.tick(self.framerate)
+            self.scene.update(dt)
+            self.scene.render()
+            pygame.display.flip()
+
+    def _update_event(self):
+        for e in pygame.event.get():
+            if e.type == QUIT:
+                self.quit = True
+            elif e.type == KEYDOWN and e.key == K_q:
+                self.quit = True
+            elif e.type == KEYDOWN and e.key == K_f:
+                self.fullscreen()
+            else:
+                self.scene.update_event(e)
+
+    def fullscreen(self):
+        pygame.display.toggle_fullscreen()
    
         
 class SceneExit(Exception):
@@ -60,42 +78,7 @@ class Scene:
         
     def end(self, value=None):
         self.return_value = value
-        raise SceneExit()
-        
-    def runScene(self, scene):
-        ret = scene.run()
-        if DEBUG: print "Left Scene", str(scene), "with", ret
-        self.paint()
-        return ret
-        
-    def run(self):
-        if DEBUG: print "Entering Scene:", str(self)
-        self.game.screen.blit(self.background, (0,0))
-        for s in self.subscenes:
-            s.paint()
-        self.paint()
-        pygame.display.flip()
-        while 1:
-            self.game.tick()
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    sys.exit()
-                else:
-                    try:
-                        self.event(event)
-                    except SceneExit:
-                        return self.return_value
-                    
-            try:
-                self.loop()
-                for s in self.subscenes:
-                    s.loop()
-            except SceneExit:
-                return self.return_value
-            for s in self.subscenes:
-                s.update()
-            self.update()
-            pygame.display.flip()
+        self.game.quit = True
         
     def event(self, evt):
         pass
@@ -103,7 +86,7 @@ class Scene:
     def loop(self):
         pass
         
-    def update(self):
+    def update(self,dt):
         pass
         
     def paint(self):
