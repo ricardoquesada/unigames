@@ -6,6 +6,7 @@ import pygame
 from pygame.locals import *
 from engine import Game, Scene
 import time, random
+from mainmenu import MainMenu
 DEBUG = 0
 
 
@@ -45,7 +46,7 @@ class JoustGame(Scene):
         self.unicycle_joust = UnicycleSprite( (0,200))
         self.joust = JoustSprite( (0,200))
 
-    def event(self, evt):
+    def update_event(self, evt):
         if evt.type == KEYDOWN:
             if evt.key == K_ESCAPE:
                 self.end()
@@ -61,18 +62,19 @@ class JoustGame(Scene):
     def loop(self):
         pass
 
-    def update(self):
-#        self.unicycle_joust.update()
-#        self.joust.update()
-
+    def render( self ):
         self.game.screen.blit(self.background, (0,0))
         self.unicycle_joust.update()
         self.game.screen.blit(self.unicycle_joust.image, self.unicycle_joust.rect)
         self.game.screen.blit(self.joust.image, self.unicycle_joust.rect)
 
+    def update(self, dt):
+        pass
+
 def main():
-    g = Game(640,480, framerate = 20, title = "Unicycle Games" )
-    g.run( JoustGame(g) )
-    
+    g = Game(640, 480, framerate = 30, title = "Unicycle Games")
+    g.change_scene( MainMenu(g) )
+    g.main_loop()
+
 if __name__ == "__main__":
     main()
