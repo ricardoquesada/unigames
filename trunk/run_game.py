@@ -11,7 +11,9 @@ except:
 
 
 import game
+import gext_test
 
 if __name__ == '__main__':
-    game.main()
+#    game.main()
+    gext_test.main()
 
