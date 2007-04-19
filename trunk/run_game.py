@@ -10,10 +10,7 @@ except:
     pass
 
 
-import game
-import gext_test
+import mainmenu
 
 if __name__ == '__main__':
-#    game.main()
-    gext_test.main()
-
+    mainmenu.main()
