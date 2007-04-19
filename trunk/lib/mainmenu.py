@@ -1,47 +1,84 @@
-# -*- coding: iso-8859-1 -*-
+from pygext.gl.all import *
 import pygame
-from pygame.locals import *
-from engine import Game, Scene
-from menu import Menu
-from euclid import *
-DEBUG = 0
+from menu import *
 
-class MainMenu(Scene):
+class UniMainMenu(Scene):
     def init(self):
-        self.menu = Menu(
-                 font = pygame.font.Font("data/You Are Loved.ttf",40),
-                 font_selected = pygame.font.Font("data/You Are Loved.ttf",60),
-                 opts = ( ("Long Jump",self.long_jump),
-                        ("High Jump", self.high_jump),
-                        ("High Scores", self.high_scores),
-                        ("Credits", self.credits),
-                        ("Quit", self.end ) ),
-                 margin = -38,
-                 normal_color = (200,200,200),
-                 normal_border_color = (128,128,128),
-                 selected_color = (255,255,255),
-                 selected_border_color = (50,255,50),
-                 rectangle = Point2(640/2,180)
-                 )
+        self.font = GLFont( pygame.font.Font("data/You Are Loved.ttf",42) )
+        self.circusfont = GLFont( pygame.font.Font("data/KonQa_Black.ttf",80) )
         
-    def render(self):
-        self.game.screen.blit(self.background, (0,0))
-        self.menu.blit(self.game.screen)
+        ## All graphical entities are displayed on layers,
+        ## so we need to create at least one.
+        self.new_layer("unigames",1)
+        self.new_layer("menu",2)
+        
+        self.text = TextEntity(self.circusfont, "UNIGAMES", scale=1 )
+        self.text.center = (640/2, 90)
+        self.text.color = (250,250,250)
+        self.text.place("unigames")
 
-    def long_jump( self ):
-        print "Long Jump selected"
+        self.menu = NiceTextMenu(items=["New Game", "View Scores","Options","Credits"], font=self.font, scale=1)
+        self.menu.center = (640/2, 250)
+        self.menu.place("menu")
+        self.menu.select_callback = self.menu_select
+        self.menu.escape_callback = self.escape_select
 
-    def high_jump( self ):
-        print "High Jump selected"
 
-    def high_scores( self ):
-        print "high Scores"
+    def menu_select(self):
+#        if self.menu.selected == 0:
+#            director.set_scene(NewGame)
 
-    def credits( self ):
-        print "credits"
+#        elif self.menu.selected == 1:
+#            director.set_scene(HighScores)
 
-    def update_event(self, evt):
-        self.menu.update_event(evt)
+        if self.menu.selected == 2:
+            director.set_scene(UniOptionMenu)
 
-    def update( self, dt ):
-        pass
+#        elif self.menu.selected == 3:
+#            director.set_scene(Credits)
+
+    def escape_select(self):
+        director.quit()
+    
+    ## We'll add a simple keydown event handler to the scene
+    ## so that pressing any key will quit the program.        
+    def handle_keydown(self, event):
+        self.menu.handle_keydown(event)
+
+class UniOptionMenu(Scene):
+    def init(self):
+        self.font = GLFont( pygame.font.Font("data/You Are Loved.ttf",42) )
+        self.circusfont = GLFont( pygame.font.Font("data/KonQa_Black.ttf",80) )
+        
+        self.new_layer("unigames",1)
+        self.new_layer("menu",2)
+        
+        self.text = TextEntity(self.circusfont, "UNIGAMES", scale=1 )
+        self.text.center = (640/2, 90)
+        self.text.color = (250,250,250)
+        self.text.place("unigames")
+
+        self.menu = NiceTextMenu(items=["Toggle Fullscreen"], font=self.font, scale=1)
+        self.menu.center = (640/2, 250)
+        self.menu.place("menu")
+        self.menu.select_callback = self.menu_select
+        self.menu.escape_callback = self.escape_select
+
+
+    def menu_select(self):
+        if self.menu.selected == 0:
+            pygame.display.toggle_fullscreen()
+
+        if self.menu.selected == 1:
+            self.escape_select()
+
+    def escape_select(self):
+        director.set_scene( UniMainMenu )
+    
+    def handle_keydown(self, event):
+        self.menu.handle_keydown(event)
+
+
+def main():
+    screen.init((640,480),fullscreen=True,title="UNIGAMES")
+    director.run(UniMainMenu)

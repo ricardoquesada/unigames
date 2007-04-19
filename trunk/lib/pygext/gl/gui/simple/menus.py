@@ -101,7 +101,7 @@ class SimpleTextMenu(SimpleBaseMenu):
             e.top = 0
         else:
             prev = self.item_ents[index-1]
-            e.top = prev.bottom - 15
+            e.top = prev.bottom
         return e
 
     def create_selector(self, index, item):
