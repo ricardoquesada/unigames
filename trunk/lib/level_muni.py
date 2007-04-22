@@ -63,14 +63,21 @@ class Map:
 
 
 class LevelMuni(Scene):
-    def enter(self):
+    def enter(self, game):
         self.map = Map('level_muni')
         self.new_static("background", 0, camera = True)
         self.new_static("scores", 10, camera = False)
         self.draw_tiles()
         self.current_x = 0
         self.current_y = 0
-        
+
+        self.pixel_font = GLFont( pygame.font.Font("data/V5PRC___.ttf",24) )
+
+        self.score_text = TextEntity( self.pixel_font, "score: 12345")
+        self.score_text.set( centerx = 50,
+                centery = 50,
+                color = (255,255,255,255) )
+        self.score_text.place("scores")
 
     def draw_tiles( self ):
         for i in range(self.map.w):
@@ -80,11 +87,10 @@ class LevelMuni(Scene):
                     self.add("background", c )
                     c.set( left=i*TILE_SIZE, top=j*TILE_SIZE)
 
-
     def tick( self ):
         if director.ticker.realtick:
             self.check_keyboard()
-
+            self.update_score()
 
     def check_keyboard( self ):
         SKIP_PIXEL = 3
