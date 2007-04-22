@@ -1,7 +1,7 @@
 from pygext.gl.all import *
 import pygame
 from menu import *
-import game
+import level_muni
 
 class UniMainMenu(Scene):
     def init(self):
@@ -27,7 +27,7 @@ class UniMainMenu(Scene):
 
     def menu_select(self):
         if self.menu.selected == 0:
-            director.set_scene(game.GameTest)
+            director.set_scene(level_muni.LevelMuni)
 
 #        elif self.menu.selected == 1:
 #            director.set_scene(HighScores)
@@ -81,5 +81,5 @@ class UniOptionMenu(Scene):
 
 
 def main():
-    screen.init((640,480),fullscreen=True,title="UNIGAMES")
+    screen.init((640,480),(640,480),fullscreen=False,title="UNIGAMES")
     director.run(UniMainMenu)
