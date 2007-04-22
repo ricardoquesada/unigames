@@ -42,9 +42,9 @@ class Node(object):
     fast_draw = False
 
     def __init__(self):
-	## TODO: As a memory optimization, all Set attributes could
-	##       be None on initialization, and created lazily when
-	##       needed.
+        ## TODO: As a memory optimization, all Set attributes could
+        ##       be None on initialization, and created lazily when
+        ##       needed.
         self.parent = None
         self.fchildren = Set()
         self.bchildren = Set()
@@ -54,7 +54,7 @@ class Node(object):
         self.realx = 0
         self.realy = 0
 
-	self._collision_nodes = Set()
+        self._collision_nodes = Set()
 
         self.x = 0
         self.y = 0
@@ -62,23 +62,23 @@ class Node(object):
         self.angle = 0
 
     def abort_actions(self, typefilter=None):
-	"""abort_actions([typefilter]) -> None
-	
-	End all current actions (if any) and do NOT proceed to
-	any new actions. If typefilter is given, only actions of
-	that type (and its subclasses) are aborted.
-	"""
+        """abort_actions([typefilter]) -> None
+        
+        End all current actions (if any) and do NOT proceed to
+        any new actions. If typefilter is given, only actions of
+        that type (and its subclasses) are aborted.
+        """
         for a in list(self.current_actions):
             if typefilter is None or isinstance(a, typefilter):
                 a.abort()
 
     def end_actions(self, typefilter=None):
-	"""end_actions([typefilter]) -> None
-	
-	End all current actions and proceed to the next actions
-	in the action chains. If typefilter is given, only action
-	of that type (and its subclasses) are ended.
-	"""
+        """end_actions([typefilter]) -> None
+        
+        End all current actions and proceed to the next actions
+        in the action chains. If typefilter is given, only action
+        of that type (and its subclasses) are ended.
+        """
         for a in list(self.current_actions):
             if typefilter is None or isinstance(a, typefilter):
                 a.end()
@@ -89,11 +89,11 @@ class Node(object):
                 if typefilter is None or isinstance(a, typefilter)]
 
     def do(self, *actions, **kw):
-	"""do(*actions) -> this
-	
-	Begin performing a new action(s) on this entity.
-	"""
-	for action in actions:
+        """do(*actions) -> this
+        
+        Begin performing a new action(s) on this entity.
+        """
+        for action in actions:
             if isinstance(action, type):
                 action = action()
             action.do(self, **kw)
@@ -178,11 +178,11 @@ class Node(object):
             self.realx, self.realy = project_point(0,0)
             self.realx += ox
             self.realy += oy
-	    for n in self._collision_nodes:
-		n.realx, n.realy = project_point(n.x, n.y)
-		n.realx += ox
-		n.realy += oy
-	filter(Node.traverse, self.bchildren)
+            for n in self._collision_nodes:
+                n.realx, n.realy = project_point(n.x, n.y)
+                n.realx += ox
+                n.realy += oy
+        filter(Node.traverse, self.bchildren)
         self.enter()
         filter(Node.traverse, self.fchildren)
         self.exit()

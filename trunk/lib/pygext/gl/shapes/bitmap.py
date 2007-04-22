@@ -61,23 +61,23 @@ class Bitmap(GLShape):
     border = False
     
     def init(self, img, hotspot=None, border=None):
-	"""Bitmap(surface, hotspot=(0.5,0.5))
-	
-	Initialize a new Bitmap object.
-	
-	surface - Pygame surface to wrap
-	hotspot - The hotspot is used as a fixed point for transformations.
-		  Valid values range from (0,0) to (1,1) (top left to bottom right).
-		  The center of the image is (0.5, 0.5)
-	"""
-	if hotspot is None:
+        """Bitmap(surface, hotspot=(0.5,0.5))
+        
+        Initialize a new Bitmap object.
+        
+        surface - Pygame surface to wrap
+        hotspot - The hotspot is used as a fixed point for transformations.
+                  Valid values range from (0,0) to (1,1) (top left to bottom right).
+                  The center of the image is (0.5, 0.5)
+        """
+        if hotspot is None:
             hotspot = self.default_hotspot
         if border is not None:
             self.border = border
         img = self._load_surf(img)
         self._tex = None
         self.hotspot = hotspot
-	self._subimages = None
+        self._subimages = None
         self._setimage(img)
 
     def _load_surf(img):
@@ -119,49 +119,49 @@ class Bitmap(GLShape):
         return self.trans.transform_rect(r)
 
     def _make_subimages(self, img, size=MAX_TEXTURE_SIZE):
-	xs,ys = img.get_size()
-	xsegments = xs // size
-	ysegments = ys // size
-	xleftover = xs % size
-	yleftover = ys % size
+        xs,ys = img.get_size()
+        xsegments = xs // size
+        ysegments = ys // size
+        xleftover = xs % size
+        yleftover = ys % size
 
-	rows = []
-	y = 0
-	for y in range(ysegments):
-	    row = []
-	    rows.append(row)
-	    for x in range(xsegments):
-		subimg = img.subsurface((x*size,y*size,size,size))
-		row.append(Bitmap(subimg, hotspot=(0,0)))
-	    if xleftover:
-		subimg = img.subsurface((xsegments*size,y*size, xleftover, size))
-		row.append(Bitmap(subimg, hotspot=(0,0)))
-	if yleftover:
-	    row = []
-	    rows.append(row)
-	    x = 0
-	    for x in range(xsegments):
-		subimg = img.subsurface((x*size,ysegments*size,size,yleftover))
-		row.append(Bitmap(subimg, hotspot=(0,0)))
-	    if xleftover:
-		subimg = img.subsurface((size*xsegments,size*ysegments, xleftover, yleftover))
-		row.append(Bitmap(subimg, hotspot=(0,0)))
-	self._subimages = rows
-	self._subimagesize = size
+        rows = []
+        y = 0
+        for y in range(ysegments):
+            row = []
+            rows.append(row)
+            for x in range(xsegments):
+                subimg = img.subsurface((x*size,y*size,size,size))
+                row.append(Bitmap(subimg, hotspot=(0,0)))
+            if xleftover:
+                subimg = img.subsurface((xsegments*size,y*size, xleftover, size))
+                row.append(Bitmap(subimg, hotspot=(0,0)))
+        if yleftover:
+            row = []
+            rows.append(row)
+            x = 0
+            for x in range(xsegments):
+                subimg = img.subsurface((x*size,ysegments*size,size,yleftover))
+                row.append(Bitmap(subimg, hotspot=(0,0)))
+            if xleftover:
+                subimg = img.subsurface((size*xsegments,size*ysegments, xleftover, yleftover))
+                row.append(Bitmap(subimg, hotspot=(0,0)))
+        self._subimages = rows
+        self._subimagesize = size
     
     def _setimage(self, img):
 
         xs,ys = img.get_size()
-	self.size = xs,ys
-	if self.border:
+        self.size = xs,ys
+        if self.border:
             xs += 2
             ys += 2
-	
-	if xs > MAX_TEXTURE_SIZE or ys > MAX_TEXTURE_SIZE:
-	    self._make_subimages(img)
-	    self.unallocate()
-	    return
-	
+        
+        if xs > MAX_TEXTURE_SIZE or ys > MAX_TEXTURE_SIZE:
+            self._make_subimages(img)
+            self.unallocate()
+            return
+        
         tx = power2(xs)
         ty = power2(ys)
         self.texsize = tx,ty
@@ -191,19 +191,19 @@ class Bitmap(GLShape):
         hx,hy = self.hotspot
         hx *= -(xs)
         hy *= -(ys)
-	if self._subimages:
-	    if hx or hy:
-		glTranslatef(hx,hy,0)
-	    for i,row in enumerate(self._subimages):
-		glPushMatrix()
-		if i > 0:
-		    glTranslatef(0,i*self._subimagesize,0)
-		for img in row:
-		    img._execute()
-		    glTranslatef(self._subimagesize,0,0)
-		glPopMatrix()
-	    return
-		
+        if self._subimages:
+            if hx or hy:
+                glTranslatef(hx,hy,0)
+            for i,row in enumerate(self._subimages):
+                glPushMatrix()
+                if i > 0:
+                    glTranslatef(0,i*self._subimagesize,0)
+                for img in row:
+                    img._execute()
+                    glTranslatef(self._subimagesize,0,0)
+                glPopMatrix()
+            return
+                
         #glEnable(GL_TEXTURE_2D)
         glBindTexture(GL_TEXTURE_2D, self._tex.texid)
         glBegin(GL_QUADS)
@@ -233,7 +233,7 @@ class Bitmap(GLShape):
         hx,hy = self.hotspot
         hx *= -(xs)
         hy *= -(ys)
-		
+                
         tx,ty = self.texsize
         tx = xs/float(tx)
         ty = ys/float(ty)
