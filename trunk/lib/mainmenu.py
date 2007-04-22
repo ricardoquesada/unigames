@@ -2,6 +2,7 @@ from pygext.gl.all import *
 import pygame
 from menu import *
 import level_muni
+import game
 
 class UniMainMenu(Scene):
     def init(self):
@@ -24,10 +25,12 @@ class UniMainMenu(Scene):
         self.menu.select_callback = self.menu_select
         self.menu.escape_callback = self.escape_select
 
+        self.game = game.Game()
+
 
     def menu_select(self):
         if self.menu.selected == 0:
-            director.set_scene(level_muni.LevelMuni)
+            director.set_scene(level_muni.LevelMuni, game.Game() )
 
 #        elif self.menu.selected == 1:
 #            director.set_scene(HighScores)

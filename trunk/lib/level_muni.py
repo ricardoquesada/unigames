@@ -64,20 +64,36 @@ class Map:
 
 class LevelMuni(Scene):
     def enter(self, game):
+        self.game = game
         self.map = Map('level_muni')
         self.new_static("background", 0, camera = True)
-        self.new_static("scores", 10, camera = False)
-        self.draw_tiles()
+        self.new_layer("scores", 10, camera = False)
+        self.new_layer("sprites", 15, camera = True)
+
         self.current_x = 0
         self.current_y = 0
 
-        self.pixel_font = GLFont( pygame.font.Font("data/V5PRC___.ttf",24) )
+        self.score_init()
+        self.sprite_init()
 
-        self.score_text = TextEntity( self.pixel_font, "score: 12345")
-        self.score_text.set( centerx = 50,
-                centery = 50,
-                color = (255,255,255,255) )
+        self.draw_tiles()
+
+
+    def sprite_init( self ):
+        self.uni_sprite = Entity("data/unicycle.png", hotspot=(0,0))
+        self.uni_sprite.set(left=0, top=200).place("sprites")
+        self.uni_sprite.do( MoveTo( 2000,100,15, mode=PingPongMode ) )
+
+    def score_init( self ):
+        self.pixel_font = GLFont( pygame.font.Font("data/V5PRC___.ttf",24) )
+        self.score_text = TextEntity( self.pixel_font, "" )
+        self.score_text.set( centerx = 0, centery = 20, color = (255,255,255,255) )
         self.score_text.place("scores")
+
+        self.pos_text= TextEntity( self.pixel_font, "" )
+        self.pos_text.set( centerx = 0, centery = 50, color = (255,255,255,255) )
+        self.pos_text.place("scores")
+
 
     def draw_tiles( self ):
         for i in range(self.map.w):
@@ -89,8 +105,13 @@ class LevelMuni(Scene):
 
     def tick( self ):
         if director.ticker.realtick:
+            self.game.score += 1
             self.check_keyboard()
             self.update_score()
+
+    def update_score( self ):
+        self.score_text.set_text("score: %d" % self.game.score )
+        self.pos_text.set_text("x: %d, y: %d" % (self.current_x, self.current_y) )
 
     def check_keyboard( self ):
         SKIP_PIXEL = 3
@@ -101,16 +122,16 @@ class LevelMuni(Scene):
                 self.current_y = 0
         elif k[K_DOWN]:
             self.current_y += SKIP_PIXEL
-            if self.current_y > self.map.h * TILE_SIZE:
-                self.current_y = self.map.h * TILE_SIZE
+            if self.current_y > self.map.h * TILE_SIZE - 480:
+                self.current_y = self.map.h * TILE_SIZE - 480
         if k[K_LEFT]:
             self.current_x -= SKIP_PIXEL
             if self.current_x < 0:
                 self.current_x = 0
         elif k[K_RIGHT]:
             self.current_x += SKIP_PIXEL
-            if self.current_x > self.map.w * TILE_SIZE:
-                self.current_x = self.map.w * TILE_SIZE
+            if self.current_x > self.map.w * TILE_SIZE - 640:
+                self.current_x = self.map.w * TILE_SIZE - 640
         if k[K_ESCAPE]:
             director.quit()
 
