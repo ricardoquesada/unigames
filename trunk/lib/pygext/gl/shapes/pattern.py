@@ -44,7 +44,7 @@ class PatternImage(Bitmap):
 
     def _setimage(self, img):
         xs,ys = img.get_size()
-	self.size = xs,ys
+        self.size = xs,ys
         tx = power2(xs)
         ty = power2(ys)
         s = pygame.Surface((xs,ys), SRCALPHA, 32)
