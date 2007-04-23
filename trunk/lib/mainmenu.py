@@ -85,4 +85,5 @@ class UniOptionMenu(Scene):
 
 def main():
     screen.init((640,480),(640,480),fullscreen=False,title="UNIGAMES")
+    director.visible_collision_nodes = True
     director.run(UniMainMenu)

@@ -31,13 +31,13 @@ class CollisionNode(object):
     __slots__ = ("parent", "x", "y", "realx", "realy")
     
     def __init__(self, parent, x, y):
-	self.x = x
-	self.y = y
-	self.parent = weakref.proxy(parent)
-	#self.parent = parent
-	self.realx = 0
-	self.realy = 0
-	
+        self.x = x
+        self.y = y
+        self.parent = weakref.proxy(parent)
+        #self.parent = parent
+        self.realx = 0
+        self.realy = 0
+        
 
 class CollisionHandler(object):
     """Abstract base clasee for collision handlers"""
@@ -46,7 +46,7 @@ class CollisionHandler(object):
     def add_node(self, groupname, parent, *arg, **kw):
         """abstract method implemented in subclasses"""
         raise NotImplemented
-	
+        
 class RadialCollisionNode(CollisionNode):
     """Collision node based on a radius.
     
@@ -54,7 +54,7 @@ class RadialCollisionNode(CollisionNode):
     """
        
     def __init__(self, parent, radius=None, x=0, y=0):
-	if radius is None:
+        if radius is None:
             if hasattr(parent, "shape") and parent.shape is not None:
                 r = parent.shape.bounding_rect
                 x,y = r.center
@@ -62,13 +62,13 @@ class RadialCollisionNode(CollisionNode):
                 radius = size / 2.0
             else:
                 radius = 0
-	CollisionNode.__init__(self, parent, x, y)
-	self.radius = radius
+        CollisionNode.__init__(self, parent, x, y)
+        self.radius = radius
 
     def draw(self):
         circle(self.radius).fillcolor(255,255,255,100).translate(self.x,self.y).execute()
         
-	
+        
 
 class RadialCollisions(object):
     """Collision handler for circle-shaped objects
@@ -78,55 +78,55 @@ class RadialCollisions(object):
     """
     
     def __init__(self):
-	self.groups = {}
-	self.handlers = {}
-	
+        self.groups = {}
+        self.handlers = {}
+        
     def add_node(self, groupname, parent, radius=None, x=0, y=0):
-	"""Add a new collision node for an entity.
-	
-	groupname - name for the collision group, used for registering handler functions
-	parent    - parent Node to attach the collision node to
-	radius    - size of the collision circle
-	x,y       - position of the collision circle
-	
-	If radius,x and y are not specified, the method tries to calculcate
-	a suitable collision circle by using the Entity's shape's
-	bounding rect.
-	
-	Note that a single entity CAN have several collision circles
-	to accomodate non-circular shapes.
-	"""
-	node = RadialCollisionNode(parent, radius, x, y)
-	if isinstance(parent, Node):
+        """Add a new collision node for an entity.
+        
+        groupname - name for the collision group, used for registering handler functions
+        parent    - parent Node to attach the collision node to
+        radius    - size of the collision circle
+        x,y       - position of the collision circle
+        
+        If radius,x and y are not specified, the method tries to calculcate
+        a suitable collision circle by using the Entity's shape's
+        bounding rect.
+        
+        Note that a single entity CAN have several collision circles
+        to accomodate non-circular shapes.
+        """
+        node = RadialCollisionNode(parent, radius, x, y)
+        if isinstance(parent, Node):
             parent._collision_nodes.add(node)
-	try:
-	    group = self.groups[groupname]
-	except KeyError:
-	    group = weakref.WeakKeyDictionary()
-	    self.groups[groupname] = group
-	group[node] = True
-	return node
+        try:
+            group = self.groups[groupname]
+        except KeyError:
+            group = weakref.WeakKeyDictionary()
+            self.groups[groupname] = group
+        group[node] = True
+        return node
 
     def set_handler(self, group1, group2, func):
-	"""Set the collision handler function for two groups.
-	
-	Register the function that will be called when entities from the
-	specified groups collide. For performance, it is more efficient
-	to specify the groups in few-to-many order. For example,
-	
-	set_handler(self, "player", "enemies", player_collide)
-	"""
+        """Set the collision handler function for two groups.
+        
+        Register the function that will be called when entities from the
+        specified groups collide. For performance, it is more efficient
+        to specify the groups in few-to-many order. For example,
+        
+        set_handler(self, "player", "enemies", player_collide)
+        """
         self.handlers[(group1,group2)] = func
 
     def start(self):
-	"""Start checking for collisions automatically every tick.
-	"""
-	director.collisions.add(self)
-	
+        """Start checking for collisions automatically every tick.
+        """
+        director.collisions.add(self)
+        
     def stop(self):
-	"""Stop the automatic collision detection.
-	"""
-	director.collisions.remove(self)
+        """Stop the automatic collision detection.
+        """
+        director.collisions.remove(self)
 
     def draw_nodes(self):
         glColor4f(1,1,1,0.4)
@@ -138,8 +138,8 @@ class RadialCollisions(object):
         self.groups = {}
 
     def check_collisions(self):
-	"""Check for collisions and call all registered collision functions.
-	"""
+        """Check for collisions and call all registered collision functions.
+        """
         for (g1,g2),func in self.handlers.iteritems():
             nodes1 = list(self.groups.get(g1,[]))
             nodes2 = list(self.groups.get(g2,[]))

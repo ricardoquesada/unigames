@@ -69,7 +69,8 @@ class Director(object):
             screen.clear()
             self.scene.draw()
             if self.visible_collision_nodes:
-                self.scene.coll.draw_nodes()
+                if self.scene.coll:
+                    self.scene.coll.draw_nodes()
                 gc.collect()
             mx,my = pygame.mouse.get_pos()
             mx *= screen.xmult
