@@ -50,7 +50,8 @@ class LevelMuni(Scene):
 
 
     def tick(self):
-        sh = 400
+        # sky limit
+        sh = 1200
         cx = self.uni_sprite.x - 320
         cy = self.uni_sprite.y - 240
         if cy < -sh:
@@ -61,8 +62,10 @@ class LevelMuni(Scene):
             cx = 0
         if cx > 3000:
             cx = 3000
-            
+
+        # camera location
         self.offset = (cx,cy)
+
 
     def realtick( self ):
         if director.ticker.realtick:
@@ -70,7 +73,6 @@ class LevelMuni(Scene):
             self.check_keyboard()
             self.update_score()
             self.uni_sprite.tick( self.map )
-
 
     def update_score( self ):
         self.score_text.set_text("score: %d" % self.game.score )
