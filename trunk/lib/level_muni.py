@@ -49,7 +49,22 @@ class LevelMuni(Scene):
                     c.set( left=i*TILE_SIZE, top=j*TILE_SIZE)
 
 
-    def tick( self ):
+    def tick(self):
+        sh = 400
+        cx = self.uni_sprite.x - 320
+        cy = self.uni_sprite.y - 240
+        if cy < -sh:
+            cy = -sh
+        elif cy > 0:
+            cy = 0
+        if cx < 0:
+            cx = 0
+        if cx > 3000:
+            cx = 3000
+            
+        self.offset = (cx,cy)
+
+    def realtick( self ):
         if director.ticker.realtick:
             self.game.score += 1
             self.check_keyboard()
@@ -59,32 +74,20 @@ class LevelMuni(Scene):
 
     def update_score( self ):
         self.score_text.set_text("score: %d" % self.game.score )
-        self.pos_text.set_text("x: %d, y: %d" % (self.current_x, self.current_y) )
+        self.pos_text.set_text("x: %d, y: %d" % (self.uni_sprite.x, self.uni_sprite.y) )
 
     def check_keyboard( self ):
-        SKIP_PIXEL = 3
         k = pygame.key.get_pressed()
         if k[K_UP]:
-            self.current_y -= SKIP_PIXEL
-            if self.current_y < 0:
-                self.current_y = 0
+            self.uni_sprite.jump()
         elif k[K_DOWN]:
-            self.current_y += SKIP_PIXEL
-            if self.current_y > self.map.h * TILE_SIZE - 480:
-                self.current_y = self.map.h * TILE_SIZE - 480
+            pass
         if k[K_LEFT]:
-            self.current_x -= SKIP_PIXEL
-            if self.current_x < 0:
-                self.current_x = 0
+            self.uni_sprite.ride_left()
         elif k[K_RIGHT]:
-            self.current_x += SKIP_PIXEL
-            if self.current_x > self.map.w * TILE_SIZE - 640:
-                self.current_x = self.map.w * TILE_SIZE - 640
+            self.uni_sprite.ride_right()
         if k[K_ESCAPE]:
             director.quit()
-
-        self.offset = (self.current_x, self.current_y)
-
 
     def collision_unicycle_floor(self, unicycle, floor):
         print "collision (%d,%d) (%d,%d)" % (unicycle.x, unicycle.y, floor.x,floor.y)
