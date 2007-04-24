@@ -9,8 +9,6 @@ class UniMainMenu(Scene):
         self.font = GLFont( pygame.font.Font("data/You Are Loved.ttf",42) )
         self.circusfont = GLFont( pygame.font.Font("data/KonQa_Black.ttf",80) )
         
-        ## All graphical entities are displayed on layers,
-        ## so we need to create at least one.
         self.new_layer("unigames",1)
         self.new_layer("menu",2)
         
@@ -44,8 +42,6 @@ class UniMainMenu(Scene):
     def escape_select(self):
         director.quit()
     
-    ## We'll add a simple keydown event handler to the scene
-    ## so that pressing any key will quit the program.        
     def handle_keydown(self, event):
         self.menu.handle_keydown(event)
 
@@ -85,5 +81,5 @@ class UniOptionMenu(Scene):
 
 def main():
     screen.init((640,480),(640,480),fullscreen=False,title="UNIGAMES")
-    director.visible_collision_nodes = True
+#    director.visible_collision_nodes = True
     director.run(UniMainMenu)
