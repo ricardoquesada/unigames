@@ -4,6 +4,7 @@ from pygame.locals import *
 import map
 from map import TILE_SIZE
 from sprites import UnicycleEntity
+from pygext.lazy import Random
 
 
 class LevelMuni(Scene):
@@ -14,6 +15,7 @@ class LevelMuni(Scene):
         self.game = game
         self.map = map.Map('level_muni')
         self.new_static("background", 0, camera = True)
+        self.new_layer("dirt", 20, camera = True)
         self.new_layer("scores", 10, camera = False)
         self.new_layer("sprites", 15, camera = True)
 
@@ -22,9 +24,12 @@ class LevelMuni(Scene):
 
         self.score_init()
         self.sprite_init()
+        self.particle_system_init()
 
         self.draw_tiles()
 
+    def particle_system_init( self ):
+        self.particle_system = DirtSystem()
 
     def sprite_init( self ):
         self.uni_sprite = UnicycleEntity()
@@ -82,6 +87,7 @@ class LevelMuni(Scene):
         k = pygame.key.get_pressed()
         if k[K_UP]:
             self.uni_sprite.jump()
+            self.particle_system.new_emitter( CrashEmitter, x=self.uni_sprite.x, y=self.uni_sprite.y+50 )
         elif k[K_DOWN]:
             pass
         if k[K_LEFT]:
@@ -93,3 +99,27 @@ class LevelMuni(Scene):
 
     def collision_unicycle_floor(self, unicycle, floor):
         print "collision (%d,%d) (%d,%d)" % (unicycle.x, unicycle.y, floor.x,floor.y)
+
+
+class CrashEmitter(CircleEmitter):
+    tangent = False
+    radius = 20
+    
+    direction = 0
+    angle = 160
+    velocity = Random(10, 150)
+    num_particles = 20
+    num_emits = 1
+    scale = Random(0.5,1.0)
+    rotation = Random(360)
+    rotation_delta = Random(-150,150)
+    life = Random(0.5,2)
+    fade_time = 0.1
+
+
+class DirtSystem(BitmapParticleSystem):
+    image = "data/dirtparticle.png"
+    layer = "dirt"
+    mutators = [
+        LinearForce(0,200),
+        ]
