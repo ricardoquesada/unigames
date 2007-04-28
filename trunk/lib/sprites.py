@@ -44,7 +44,7 @@ class UnicycleEntity(EntityNode):
         UNI_SPRITE_Y = 100
 
         self.frames = []
-        sheet = tiles.SpriteSheet('Unicycle80x100.png')
+        sheet = tiles.SpriteSheet('Unicycle80x100_2.png')
         for y in range(4):
             for x in range(5):
                 load_x = x * (UNI_SPRITE_X + 1) + 1
