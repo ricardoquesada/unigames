@@ -26,15 +26,15 @@ class SpriteSheet:
         rect = Rect(rect)
         image = pygame.Surface(rect.size).convert()
         image.blit(self.sheet, (0, 0), rect)
-        return imgcolorkey(image, (0,0,0,255) )
+        return imgcolorkey(image, colorkey )
 
 class Map:
     def __init__(self, mapname):
         spritesheet = SpriteSheet('blocks1.bmp')
-        surf = spritesheet.imgat((444, 104, 32, 32))
-        surf2 = spritesheet.imgat((240, 2, 32, 32))
-        surf3 = spritesheet.imgat((172, 36, 32, 32))
-        surf4 = spritesheet.imgat((342, 36, 32, 32))
+        surf = spritesheet.imgat((444, 104, 32, 32),(0,0,0,255))
+        surf2 = spritesheet.imgat((240, 2, 32, 32),(0,0,0,255))
+        surf3 = spritesheet.imgat((172, 36, 32, 32),(0,0,0,255))
+        surf4 = spritesheet.imgat((342, 36, 32, 32),(0,0,0,255))
 
         self.bg = {}
         img = load_image(mapname + '.bmp')

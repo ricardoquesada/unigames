@@ -3,8 +3,8 @@ from pygext.gl.all import *
 import pygame
 import sound
 from pygame.locals import *
-import map
-from map import TILE_SIZE
+import tiles 
+from tiles import TILE_SIZE
 from sprites import UnicycleEntity
 from pygext.lazy import Random
 from pygext.gl.shapes.simple import rect
@@ -15,7 +15,7 @@ class LevelMuni(Scene):
 
     def enter(self, game):
         self.game = game
-        self.map = map.Map('level_muni')
+        self.map = tiles.Map('level_muni')
         self.new_layer("particles", 20, camera = True)
         self.new_layer("sprites", 15, camera = True)
         self.new_layer("score_panel", 10, camera = False)
