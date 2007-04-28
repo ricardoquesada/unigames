@@ -36,7 +36,7 @@ class LevelMuni(Scene):
 
     def music_init( self ):
         sound.init_music()
-#        sound.play_song("ballando")
+        sound.play_song("crikey_introtheme.mod")
 
     def particle_system_init( self ):
         self.particle_system = DirtSystem()
@@ -68,7 +68,7 @@ class LevelMuni(Scene):
 
     def sky_init( self ):
         gr = GradientRect(SCREEN_RES_X,SCREEN_RES_Y + SKY_LIMIT)
-        gr.set_colors( top=(0,0,0,255), bottom=(16,16,64,255),)
+        gr.set_colors( top=(0,0,0,255), bottom=(32,32,128,255),)
         self.sky = Entity(gr).place("sky").set( y=-SKY_LIMIT, x=0,)
 
 

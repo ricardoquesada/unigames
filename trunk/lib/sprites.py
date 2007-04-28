@@ -49,7 +49,6 @@ class UnicycleEntity(EntityNode):
             for x in range(5):
                 load_x = x * (UNI_SPRITE_X + 1) + 1
                 load_y = y * (UNI_SPRITE_Y + 1) + 1
-                print "loading from: %d,%d" % ( load_x, load_y  )
                 self.frames.insert(0, Entity(sheet.imgat( (load_x, load_y, UNI_SPRITE_X-1, UNI_SPRITE_Y-1), -1)) )
                 self.frames[0].attach_to( self )
                 self.frames[0].do( Hide() )
@@ -71,7 +70,6 @@ class UnicycleEntity(EntityNode):
             self.frames[ self.frame_shown ].do( Hide() )
             self.frame_shown = x
             self.frames[ x ].do( Show() )
-            print "frame: %d" % x
         
         self.ticker += 1
         if self.jumping == False:
