@@ -3,6 +3,7 @@ try:
 except ImportError:
     pass
 
+from config import *
 from pygext.gl.all import *
 from pygext.math.vecalg import sincos
 from pygext.render.stencils import alpha_stencil
@@ -52,7 +53,7 @@ class UnicycleEntity(EntityNode):
             h = map.get_h(x)
 
             if y > h:
-                self.move.add_velocity(0, 5)
+                self.move.add_velocity(0, GRAVITY)
             else:
                 self.move.vy = 0
                 self.on_floor = True
@@ -64,9 +65,9 @@ class UnicycleEntity(EntityNode):
                 self.jumping = False
 
         if self.move.vx < 0:
-            self.move.vx += 1
+            self.move.vx += 3
         elif self.move.vx > 0:
-            self.move.vx -= 1
+            self.move.vx -= 3
 
         if self.x < 50:
             self.x = 50

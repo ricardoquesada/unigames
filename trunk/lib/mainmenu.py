@@ -1,3 +1,4 @@
+from config import *
 from pygext.gl.all import *
 import pygame
 from menu import *
@@ -13,12 +14,12 @@ class UniMainMenu(Scene):
         self.new_layer("menu",2)
         
         self.text = TextEntity(self.circusfont, "UNIGAMES", scale=1 )
-        self.text.center = (640/2, 90)
+        self.text.center = (SCREEN_RES_X/2, 90)
         self.text.color = (250,250,250)
         self.text.place("unigames")
 
         self.menu = NiceTextMenu(items=["New Game", "View Scores","Options","Credits"], font=self.font, scale=1)
-        self.menu.center = (640/2, 250)
+        self.menu.center = (SCREEN_RES_X/2, 250)
         self.menu.place("menu")
         self.menu.select_callback = self.menu_select
         self.menu.escape_callback = self.escape_select
@@ -54,12 +55,12 @@ class UniOptionMenu(Scene):
         self.new_layer("menu",2)
         
         self.text = TextEntity(self.circusfont, "UNIGAMES", scale=1 )
-        self.text.center = (640/2, 90)
+        self.text.center = (SCREEN_RES_X/2, 90)
         self.text.color = (250,250,250)
         self.text.place("unigames")
 
         self.menu = NiceTextMenu(items=["Toggle Fullscreen"], font=self.font, scale=1)
-        self.menu.center = (640/2, 250)
+        self.menu.center = (SCREEN_RES_X/2, 250)
         self.menu.place("menu")
         self.menu.select_callback = self.menu_select
         self.menu.escape_callback = self.escape_select
@@ -80,6 +81,6 @@ class UniOptionMenu(Scene):
 
 
 def main():
-    screen.init((640,480),(640,480),fullscreen=False,title="UNIGAMES")
+    screen.init(SCREEN_RES,SCREEN_RES,fullscreen=FULLSCREEN,title="UNIGAMES")
 #    director.visible_collision_nodes = True
     director.run(UniMainMenu)

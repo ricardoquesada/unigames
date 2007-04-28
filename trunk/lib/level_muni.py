@@ -1,15 +1,13 @@
+from config import *
 from pygext.gl.all import *
 import pygame
+import sound
 from pygame.locals import *
 import map
 from map import TILE_SIZE
 from sprites import UnicycleEntity
 from pygext.lazy import Random
-
 from pygext.gl.shapes.simple import rect
-
-SKY_LIMIT = 100
-
 
 class LevelMuni(Scene):
 
@@ -18,11 +16,11 @@ class LevelMuni(Scene):
     def enter(self, game):
         self.game = game
         self.map = map.Map('level_muni')
-        self.new_static("background", 0, camera = True)
-        self.new_layer("dirt", 20, camera = True)
-        self.new_layer("scores", 10, camera = False)
-        self.new_layer("scores-alpha", 9, camera = False)
+        self.new_layer("particles", 20, camera = True)
         self.new_layer("sprites", 15, camera = True)
+        self.new_layer("score_panel", 10, camera = False)
+        self.new_layer("score_panel_alpha", 9, camera = False)
+        self.new_static("tiles", 0, camera = True)
         self.new_layer("sky",-10)
 
         self.current_x = 0
@@ -34,6 +32,11 @@ class LevelMuni(Scene):
         self.particle_system_init()
 
         self.draw_tiles()
+        self.music_init()
+
+    def music_init( self ):
+        sound.init_music()
+#        sound.play_song("ballando")
 
     def particle_system_init( self ):
         self.particle_system = DirtSystem()
@@ -45,32 +48,28 @@ class LevelMuni(Scene):
         self.pixel_font = GLFont( pygame.font.Font("data/V5PRC___.ttf",19) )
         self.score_text = TextEntity( self.pixel_font, "" )
         self.score_text.set( centerx = 0, centery = 20, color = (255,255,255,255) )
-        self.score_text.place("scores")
+        self.score_text.place("score_panel")
 
         self.pos_text= TextEntity( self.pixel_font, "" )
         self.pos_text.set( centerx = 0, centery = 50, color = (255,255,255,255) )
-        self.pos_text.place("scores")
+        self.pos_text.place("score_panel")
 
         self.power_bar = Entity("data/power_bar.png")
-        self.power_bar.set( centerx = 320, centery = 20 )
-        self.power_bar.place("scores")
+        self.power_bar.set( centerx = SCREEN_RES_X /2, centery = 20 )
+        self.power_bar.place("score_panel")
 
-        bar_alpha = rect(0,0,640,40,
-                    (0.2,0.2,0.2,0.6) )
-        bar_alpha.alpha( 32 )
-        bar_alpha.compile()
-        self.bar_alpha = Entity(bar_alpha).place("scores-alpha")
+        self.unicycle_lifes = [ Entity("data/unicycle_life.png"),Entity("data/unicycle_life.png"),Entity("data/unicycle_life.png") ]
+        for i,e in enumerate(self.unicycle_lifes):
+            e.set( centerx = 560 + i * (e.width+3), centery = 20 )
+            e.place("score_panel")
+
+        bar_alpha = rect(0,0,SCREEN_RES_X,40, (0,0,0,0.6) )
+        self.bar_alpha = Entity(bar_alpha).place("score_panel_alpha")
 
     def sky_init( self ):
-        gr = GradientRect(640,480 + SKY_LIMIT)
-        gr.set_colors(
-            top=(0,0,0,255),
-            bottom=(64,64,128,255),
-            )
-        self.sky = Entity(gr).place("sky").set(
-            y=-SKY_LIMIT,
-            x=0,
-            )
+        gr = GradientRect(SCREEN_RES_X,SCREEN_RES_Y + SKY_LIMIT)
+        gr.set_colors( top=(0,0,0,255), bottom=(16,16,64,255),)
+        self.sky = Entity(gr).place("sky").set( y=-SKY_LIMIT, x=0,)
 
 
     def draw_tiles( self ):
@@ -78,14 +77,14 @@ class LevelMuni(Scene):
             for j in range(self.map.h):
                 c = self.map.get_cell(i,j)
                 if c is not None:
-                    self.add("background", c )
+                    self.add("tiles", c )
                     c.set( left=i*TILE_SIZE, top=j*TILE_SIZE)
 
 
     def tick(self):
         # sky limit
-        cx = self.uni_sprite.x - 320
-        cy = self.uni_sprite.y - 240
+        cx = self.uni_sprite.x - SCREEN_RES_X / 2
+        cy = self.uni_sprite.y - SCREEN_RES_Y / 2
         if cy < -SKY_LIMIT:
             cy = -SKY_LIMIT
         elif cy > 0:
@@ -97,7 +96,6 @@ class LevelMuni(Scene):
 
         # camera location
         self.offset = (cx,cy)
-
         self.sky.y = (SKY_LIMIT + cy) * -0.5
 
     def realtick( self ):
@@ -115,7 +113,7 @@ class LevelMuni(Scene):
         k = pygame.key.get_pressed()
         if k[K_UP]:
             self.uni_sprite.jump()
-            self.particle_system.new_emitter( CrashEmitter, x=self.uni_sprite.x, y=self.uni_sprite.y+50 )
+#            self.particle_system.new_emitter( CrashEmitter, x=self.uni_sprite.x, y=self.uni_sprite.y+50 )
         elif k[K_DOWN]:
             pass
         if k[K_LEFT]:
@@ -147,7 +145,5 @@ class CrashEmitter(CircleEmitter):
 
 class DirtSystem(BitmapParticleSystem):
     image = "data/dirtparticle.png"
-    layer = "dirt"
-    mutators = [
-        LinearForce(0,200),
-        ]
+    layer = "particles"
+    mutators = [ LinearForce(0,200), ]
