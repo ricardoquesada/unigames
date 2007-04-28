@@ -9,6 +9,7 @@ def imgcolorkey(image, colorkey):
     if colorkey is not None:
         if colorkey is -1:
             colorkey = image.get_at((0, 0))
+            print colorkey
         image.set_colorkey(colorkey, RLEACCEL)
     return image
 
@@ -25,7 +26,7 @@ class SpriteSheet:
         rect = Rect(rect)
         image = pygame.Surface(rect.size).convert()
         image.blit(self.sheet, (0, 0), rect)
-        return imgcolorkey(image, colorkey)
+        return imgcolorkey(image, (0,0,0,255) )
 
 class Map:
     def __init__(self, mapname):

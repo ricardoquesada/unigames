@@ -6,6 +6,8 @@ from map import TILE_SIZE
 from sprites import UnicycleEntity
 from pygext.lazy import Random
 
+SKY_LIMIT = 100
+
 
 class LevelMuni(Scene):
 
@@ -18,11 +20,13 @@ class LevelMuni(Scene):
         self.new_layer("dirt", 20, camera = True)
         self.new_layer("scores", 10, camera = False)
         self.new_layer("sprites", 15, camera = True)
+        self.new_layer("sky",-10)
 
         self.current_x = 0
         self.current_y = 0
 
         self.score_init()
+        self.sky_init()
         self.sprite_init()
         self.particle_system_init()
 
@@ -44,6 +48,21 @@ class LevelMuni(Scene):
         self.pos_text.set( centerx = 0, centery = 50, color = (255,255,255,255) )
         self.pos_text.place("scores")
 
+        self.power_bar = Entity("data/power_bar.png")
+        self.power_bar.set( centerx = 320, centery = 20 )
+        self.power_bar.place("scores")
+
+    def sky_init( self ):
+        gr = GradientRect(640,480 + SKY_LIMIT)
+        gr.set_colors(
+            top=(0,0,0,255),
+            bottom=(128,128,255,255),
+            )
+        self.sky = Entity(gr).place("sky").set(
+            y=-SKY_LIMIT,
+            x=0,
+            )
+
 
     def draw_tiles( self ):
         for i in range(self.map.w):
@@ -56,11 +75,10 @@ class LevelMuni(Scene):
 
     def tick(self):
         # sky limit
-        sh = 1200
         cx = self.uni_sprite.x - 320
         cy = self.uni_sprite.y - 240
-        if cy < -sh:
-            cy = -sh
+        if cy < -SKY_LIMIT:
+            cy = -SKY_LIMIT
         elif cy > 0:
             cy = 0
         if cx < 0:
@@ -71,6 +89,7 @@ class LevelMuni(Scene):
         # camera location
         self.offset = (cx,cy)
 
+        self.sky.y = (SKY_LIMIT + cy) * -0.5
 
     def realtick( self ):
         if director.ticker.realtick:
