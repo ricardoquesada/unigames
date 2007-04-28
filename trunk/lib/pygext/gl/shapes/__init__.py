@@ -13,4 +13,3 @@ from pygext.gl.shapes.pattern import PatternImage
 from pygext.gl.shapes.gradient import GradientRect
 
 
-

@@ -7,6 +7,9 @@ from pygame.locals import Rect
 from pygext.gl.transform import AccumulatedTransform as Transformation
 from pygext.color import _conv_color
 
+# hack to make it work ?!?
+_global_alpha = [1.0]
+
 try:
     from psyco.classes import *
 except ImportError:

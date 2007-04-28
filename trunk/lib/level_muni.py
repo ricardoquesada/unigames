@@ -6,6 +6,8 @@ from map import TILE_SIZE
 from sprites import UnicycleEntity
 from pygext.lazy import Random
 
+from pygext.gl.shapes.simple import rect
+
 SKY_LIMIT = 100
 
 
@@ -19,6 +21,7 @@ class LevelMuni(Scene):
         self.new_static("background", 0, camera = True)
         self.new_layer("dirt", 20, camera = True)
         self.new_layer("scores", 10, camera = False)
+        self.new_layer("scores-alpha", 9, camera = False)
         self.new_layer("sprites", 15, camera = True)
         self.new_layer("sky",-10)
 
@@ -39,7 +42,7 @@ class LevelMuni(Scene):
         self.uni_sprite = UnicycleEntity()
 
     def score_init( self ):
-        self.pixel_font = GLFont( pygame.font.Font("data/V5PRC___.ttf",24) )
+        self.pixel_font = GLFont( pygame.font.Font("data/V5PRC___.ttf",19) )
         self.score_text = TextEntity( self.pixel_font, "" )
         self.score_text.set( centerx = 0, centery = 20, color = (255,255,255,255) )
         self.score_text.place("scores")
@@ -52,11 +55,17 @@ class LevelMuni(Scene):
         self.power_bar.set( centerx = 320, centery = 20 )
         self.power_bar.place("scores")
 
+        bar_alpha = rect(0,0,640,40,
+                    (0.2,0.2,0.2,0.6) )
+        bar_alpha.alpha( 32 )
+        bar_alpha.compile()
+        self.bar_alpha = Entity(bar_alpha).place("scores-alpha")
+
     def sky_init( self ):
         gr = GradientRect(640,480 + SKY_LIMIT)
         gr.set_colors(
             top=(0,0,0,255),
-            bottom=(128,128,255,255),
+            bottom=(64,64,128,255),
             )
         self.sky = Entity(gr).place("sky").set(
             y=-SKY_LIMIT,

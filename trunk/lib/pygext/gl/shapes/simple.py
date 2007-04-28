@@ -12,10 +12,11 @@ __all__ = [
     "circle",
     ]
 
-def rect(x,y,w,h):
-    return FuncObject(_exec_rect, x, y, w, h)
+def rect(x,y,w,h,color=(1,1,1,1) ):
+    return FuncObject(_exec_rect, x, y, w, h, color)
 
-def _exec_rect(x,y,w,h):
+def _exec_rect(x,y,w,h,color):
+    glColor4f( color[0],color[1],color[2],color[3] )
     glDisable(GL_TEXTURE_2D)
     glBegin(GL_QUADS)
     glVertex2f(x,y)
