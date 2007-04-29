@@ -13,16 +13,10 @@ import tiles
 
 
 class UnicycleEntity(EntityNode):
-    image = "data/dirtparticle.png"
+#    image = "data/unicycle.png"
     layer = "sprites"
 
     def init(self):
-#        s = Bitmap._load_surf(self.image)
-#        s = alpha_stencil(s)
-#        s = Entity(s)
-#        s.attach_to(self)
-#        s.alpha = 0
-#        self.stencil = s
 
         self.load_frames()
 
@@ -30,14 +24,15 @@ class UnicycleEntity(EntityNode):
         self.turn = Rotate(0).do(self)
 
         self.add_collnode("unicycle", 30,-10,40)
-        self.centerx = 150
-        self.centery = 300
+        self.x = 150
+        self.y = 300
 
         self.ticker = 0
         self.jumping = False
         self.on_floor = False
 
-#        self.do( Hide() )
+    def get_bounding_rect( self ):
+        return self.frames[ self.frame_shown ].get_bounding_rect()
 
     def load_frames( self ):
         UNI_SPRITE_X = 80
@@ -49,17 +44,12 @@ class UnicycleEntity(EntityNode):
             for x in range(5):
                 load_x = x * (UNI_SPRITE_X + 1) + 1
                 load_y = y * (UNI_SPRITE_Y + 1) + 1
-                self.frames.insert(0, Entity(sheet.imgat( (load_x, load_y, UNI_SPRITE_X-1, UNI_SPRITE_Y-1), -1)) )
+                self.frames.insert(0, Entity(sheet.imgat( (load_x, load_y, UNI_SPRITE_X-1, UNI_SPRITE_Y-15), -1)) )
                 self.frames[0].attach_to( self )
                 self.frames[0].do( Hide() )
 
         self.frame_shown = 0          
         self.frames[ self.frame_shown ].do( Show() )
-
-    def flash(self):
-        self.stencil.abort_actions(ColorFade)
-        self.stencil.color = (255,100,100,150)
-        self.stencil.do(ColorFade((50,0,0,0), secs=0.5))
 
 
     def tick(self, map):
