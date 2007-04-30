@@ -1,12 +1,13 @@
-UniGames
+UNIGAMES
 ========
 
 DEPENDENCIES:
 
 You might need to install some of these before running the game:
 
-  Python:     http://www.python.org/
-  PyGame:     http://www.pygame.org/
+  Python:     		http://www.python.org/
+  PyGame:   		http://www.pygame.org/
+  Python Opengl:     	http://pyopengl.sourceforge.net/
 
 
 

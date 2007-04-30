@@ -10,12 +10,7 @@ except:
     pass
 
 
-from game import Game
-from levels import *
-import separador
-import view
+import mainmenu
 
 if __name__ == '__main__':
-    g = Game()
-    g.change_scene(separador.History(g))
-    g.main_loop()
+    mainmenu.main()

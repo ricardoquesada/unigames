@@ -15,7 +15,7 @@ class LevelMuni(Scene):
 
     def enter(self, game):
         self.game = game
-        self.map = tiles.Map('level_muni')
+        self.map = tiles.WfxMap('level_muni_1')
         self.new_layer("particles", 20, camera = True)
         self.new_layer("sprites", 15, camera = True)
         self.new_layer("score_panel", 10, camera = False)
@@ -67,9 +67,11 @@ class LevelMuni(Scene):
         self.bar_alpha = Entity(bar_alpha).place("score_panel_alpha")
 
     def sky_init( self ):
-        gr = GradientRect(SCREEN_RES_X,SCREEN_RES_Y + SKY_LIMIT)
-        gr.set_colors( top=(0,0,0,255), bottom=(32,32,128,255),)
-        self.sky = Entity(gr).place("sky").set( y=-SKY_LIMIT, x=0,)
+#        gr = GradientRect(SCREEN_RES_X,SCREEN_RES_Y + SKY_LIMIT)
+#        gr.set_colors( top=(0,0,0,255), bottom=(32,32,128,255),)
+#        self.sky = Entity(gr).place("sky").set( y=-SKY_LIMIT, x=0,)
+        self.sky = Entity("data/background_0.png").place("sky")
+        self.sky.set(centerx=SCREEN_RES_X/2,centery=SCREEN_RES_Y/2)
 
 
     def draw_tiles( self ):
@@ -96,7 +98,7 @@ class LevelMuni(Scene):
 
         # camera location
         self.offset = (cx,cy)
-        self.sky.y = (SKY_LIMIT + cy) * -0.5
+#        self.sky.y = (SKY_LIMIT + cy) * -0.5
 
     def realtick( self ):
         if director.ticker.realtick:
