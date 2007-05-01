@@ -8,6 +8,7 @@ from tiles import TILE_SIZE
 from sprites import UnicycleEntity
 from pygext.lazy import Random
 from pygext.gl.shapes.simple import rect
+from game import Game
 
 class LevelMuni(Scene):
 
@@ -15,13 +16,15 @@ class LevelMuni(Scene):
 
     def enter(self, game):
         self.game = game
-        self.map = tiles.WfxMap('level_muni_1')
+#        Game.map = tiles.WfxMap('level_muni_1.tga')
+#        Game.map = tiles.OldMap('level_muni.bmp')
+        Game.map = tiles.DownHillMap( map_name = 'level_muni_2.tga', sprite_sheet = 'tiles_1.png')
         self.new_layer("particles", 20, camera = True)
         self.new_layer("sprites", 15, camera = True)
         self.new_layer("score_panel", 10, camera = False)
         self.new_layer("score_panel_alpha", 9, camera = False)
         self.new_static("tiles", 0, camera = True)
-        self.new_layer("sky",-10)
+        self.new_static("sky",-10)
 
         self.current_x = 0
         self.current_y = 0
@@ -29,17 +32,13 @@ class LevelMuni(Scene):
         self.score_init()
         self.sky_init()
         self.sprite_init()
-        self.particle_system_init()
 
         self.draw_tiles()
-        self.music_init()
+#        self.music_init()
 
     def music_init( self ):
         sound.init_music()
         sound.play_song("crikey_introtheme.mod")
-
-    def particle_system_init( self ):
-        self.particle_system = DirtSystem()
 
     def sprite_init( self ):
         self.uni_sprite = UnicycleEntity()
@@ -75,9 +74,9 @@ class LevelMuni(Scene):
 
 
     def draw_tiles( self ):
-        for i in range(self.map.w):
-            for j in range(self.map.h):
-                c = self.map.get_cell(i,j)
+        for i in range(Game.map.w):
+            for j in range(Game.map.h):
+                c = Game.map.get_cell(i,j)
                 if c is not None:
                     self.add("tiles", c )
                     c.set( left=i*TILE_SIZE, top=j*TILE_SIZE)
@@ -90,11 +89,11 @@ class LevelMuni(Scene):
         if cy < -SKY_LIMIT:
             cy = -SKY_LIMIT
         elif cy > 0:
-            cy = 0
+            cy /= 1.5
         if cx < 0:
             cx = 0
-        if cx > 3000:
-            cx = 3000
+        if cx > Game.map.w * TILE_SIZE:
+            cx = Game.map.w * TILE_SIZE
 
         # camera location
         self.offset = (cx,cy)
@@ -105,7 +104,7 @@ class LevelMuni(Scene):
             self.game.score += 1
             self.check_keyboard()
             self.update_score()
-            self.uni_sprite.tick( self.map )
+            self.uni_sprite.tick()
 
     def update_score( self ):
         self.score_text.set_text("score: %d" % self.game.score )
@@ -115,7 +114,6 @@ class LevelMuni(Scene):
         k = pygame.key.get_pressed()
         if k[K_UP]:
             self.uni_sprite.jump()
-#            self.particle_system.new_emitter( CrashEmitter, x=self.uni_sprite.x, y=self.uni_sprite.y+50 )
         elif k[K_DOWN]:
             pass
         if k[K_LEFT]:
@@ -127,25 +125,3 @@ class LevelMuni(Scene):
 
     def collision_unicycle_floor(self, unicycle, floor):
         print "collision (%d,%d) (%d,%d)" % (unicycle.x, unicycle.y, floor.x,floor.y)
-
-
-class CrashEmitter(CircleEmitter):
-    tangent = False
-    radius = 20
-    
-    direction = 0
-    angle = 160
-    velocity = Random(10, 150)
-    num_particles = 20
-    num_emits = 1
-    scale = Random(0.5,1.0)
-    rotation = Random(360)
-    rotation_delta = Random(-150,150)
-    life = Random(0.5,2)
-    fade_time = 0.1
-
-
-class DirtSystem(BitmapParticleSystem):
-    image = "data/dirtparticle.png"
-    layer = "particles"
-    mutators = [ LinearForce(0,200), ]

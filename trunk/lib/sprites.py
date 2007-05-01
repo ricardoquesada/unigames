@@ -10,6 +10,7 @@ from pygext.render.stencils import alpha_stencil
 
 from tiles import TILE_SIZE
 import tiles
+from game import Game
 
 
 class UnicycleEntity(EntityNode):
@@ -52,7 +53,7 @@ class UnicycleEntity(EntityNode):
         self.frames[ self.frame_shown ].do( Show() )
 
 
-    def tick(self, map):
+    def tick(self):
 
         # show correct frame
         x = int( (self.x % 120) / 6 )
@@ -65,8 +66,8 @@ class UnicycleEntity(EntityNode):
         if self.jumping == False:
             x = int( self.x )
             y = int( self.y ) + self._get_height() / 2
-            y = (map.h * TILE_SIZE) - y
-            h = map.get_h(x)
+            y = (Game.map.h * TILE_SIZE) - y
+            h = Game.map.get_h(x)
 
             if y > h:
                 self.move.add_velocity(0, GRAVITY)
