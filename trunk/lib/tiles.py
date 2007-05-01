@@ -82,7 +82,7 @@ class Map:
                     self._tiles[ (i,j) ] = (cell_surf,cell)
 
                 except KeyError,e:
-                    print "Warning: Color [ %s ] has no associated surface" % str(color)
+                    #print "Warning: Color [ %s ] has no associated surface" % str(color)
                     self._tiles[ (i,j) ] = (None,None)
 
     def get_h_slope( self, real_x ):
@@ -115,14 +115,14 @@ class DownHillMap(Map):
             # (map_color) : ( (tile_x,tile_y), tile_alpha_color, (tile_origin_x, tile_origin_y, tile_slope)
 #            (0,0,0,255) : ( (0,2), None, (0,31,0.0) ),              # blank tile
 
-            (255,255,255,255) : ( (0,0), None, (0,31,0.0) ),        # line tile #1
-            (255,255,192,255) : ( (1,0), None, (0,31,0.0) ),        # line tile #2
-            (255,255,128,255) : ( (16,0), None, (0,31,0.0) ),       # line tile #2
-            (255,255,64,255) : ( (17,0), None, (0,31,0.0) ),        # line tile #2
+            (255,255,255,255) : ( (16,0), None, (0,31,0.0) ),        # line tile #1
+            (255,255,192,255) : ( (17,0), None, (0,31,0.0) ),        # line tile #2
+            (255,255,128,255) : ( (0,0), None, (0,31,0.0) ),       # line tile #2
+            (255,255,64,255) : ( (1,0), None, (0,31,0.0) ),        # line tile #2
 
             (255,255,32,255) : ( (0,1), None, (0,31,0.0) ),        # dirt
 
             (255,0,255,255) : ( (2,0), None, (0,31,-0.5) ),        # slope -0.5 #1
             (255,32,255,255) : ( (3,0), None, (0,15,-0.5) ),        # slope -0.5 #2
-            (255,64,255,255) : ( (4,1), None, (0,31,-1.0) ),        # slope -1 #2
+            (255,64,255,255) : ( (0,6), None, (0,31,-1.0) ),        # slope -1 #2
         }
