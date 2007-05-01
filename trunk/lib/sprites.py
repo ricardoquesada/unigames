@@ -67,7 +67,7 @@ class UnicycleEntity(EntityNode):
             x = int( self.x )
             y = int( self.y ) + self._get_height() / 2
             y = (Game.map.h * TILE_SIZE) - y
-            h = Game.map.get_h(x)
+            h,s = Game.map.get_h_slope(x)
 
             if y > h:
                 self.move.add_velocity(0, GRAVITY)

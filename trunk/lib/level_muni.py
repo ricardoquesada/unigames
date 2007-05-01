@@ -18,7 +18,7 @@ class LevelMuni(Scene):
         self.game = game
 #        Game.map = tiles.WfxMap('level_muni_1.tga')
 #        Game.map = tiles.OldMap('level_muni.bmp')
-        Game.map = tiles.DownHillMap( map_name = 'level_muni_2.tga', sprite_sheet = 'tiles_1.png')
+        Game.map = tiles.DownHillMap( map_name = 'level_muni_2.tga', sprite_sheet = 'tiles_2.png')
         self.new_layer("particles", 20, camera = True)
         self.new_layer("sprites", 15, camera = True)
         self.new_layer("score_panel", 10, camera = False)

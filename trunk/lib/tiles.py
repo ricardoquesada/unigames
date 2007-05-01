@@ -5,6 +5,7 @@ import os
 from euclid import *
 
 TILE_SIZE = 32
+TILE_SEPARATOR = 0
 
 def imgcolorkey(image, colorkey):
     if colorkey is not None:
@@ -29,6 +30,10 @@ class SpriteSheet:
         return imgcolorkey(image, colorkey )
 
 class Map:
+  
+    TILE_COORD, TILE_ALPHA, TILE_SLOPE = range(3)
+
+
     def __init__( self, *args, **kw ):
         
         self._setup_tiles = {}      # map of colors, and tile's configurations
@@ -58,8 +63,8 @@ class Map:
         try:
             return self._tile_cache[(x,y)]
         except KeyError:
-            x = x * ( TILE_SIZE + 1) + 1
-            y = y * ( TILE_SIZE + 1) + 1
+            x = x * ( TILE_SIZE + TILE_SEPARATOR) + TILE_SEPARATOR
+            y = y * ( TILE_SIZE + TILE_SEPARATOR) + TILE_SEPARATOR
             surf = self.spritesheet.imgat((x,y, TILE_SIZE, TILE_SIZE),color)
             if surf:
                 surf = Entity( surf )
@@ -73,24 +78,25 @@ class Map:
 
                 try:
                     cell = self._setup_tiles[ color ]
-                    cell_surf = self.load_tile_surface( cell[0][0], cell[0][1], cell[1] )
+                    cell_surf = self.load_tile_surface( cell[Map.TILE_COORD][0], cell[Map.TILE_COORD][1], cell[Map.TILE_ALPHA] )
                     self._tiles[ (i,j) ] = (cell_surf,cell)
 
                 except KeyError,e:
                     print "Warning: Color [ %s ] has no associated surface" % str(color)
                     self._tiles[ (i,j) ] = (None,None)
 
-    def get_h( self, real_x ):
+    def get_h_slope( self, real_x ):
+        # retutn the height for x, and the slope
         x = real_x / TILE_SIZE
         mod_x = real_x % TILE_SIZE
         for i in range( self.h ):
             surf,cell_conf= self._tiles[ (x,i) ]
             if surf:
-                m = cell_conf[2][2] * mod_x + cell_conf[2][1]
+                m = cell_conf[Map.TILE_SLOPE][2] * mod_x + cell_conf[Map.TILE_SLOPE][1]
                 new_m = (TILE_SIZE-1) - m
                 ret = (self.h-i) * TILE_SIZE - new_m
-                return ret
-        return 0
+                return (ret, cell_conf[Map.TILE_SLOPE][2] )
+        return (0,0.0)
 
     def get_cell( self, x, y ):
         if x < 0 or x >= self.w:
