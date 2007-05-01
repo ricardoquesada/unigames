@@ -71,9 +71,12 @@ class UnicycleEntity(EntityNode):
 
             if y > h:
                 self.move.add_velocity(0, GRAVITY)
+                self.on_floor = False
             else:
-                self.move.vy = 0
-                self.on_floor = True
+                if self.move.vy > 0:
+                    self.move.vy =  - self.move.vy / 3
+                else:
+                    self.on_floor = True
 
         else:
             self.move.vy *= 0.9
