@@ -3,6 +3,7 @@ import pygame
 from pygame.locals import *
 import os
 from euclid import *
+from pygame.color import Color
 
 TILE_SIZE = 32
 TILE_SEPARATOR = 0
@@ -122,7 +123,7 @@ class DownHillMap(Map):
 
             (255,255,32,255) : ( (0,1), None, (0,31,0.0) ),        # dirt
 
-            (255,0,255,255) : ( (2,0), None, (0,31,-0.5) ),        # slope -0.5 #1
-            (255,32,255,255) : ( (3,0), None, (0,15,-0.5) ),        # slope -0.5 #2
-            (255,64,255,255) : ( (0,6), None, (0,31,-1.0) ),        # slope -1 #2
+            (255,0,255,255) : ( (2,0), Color('white'), (0,31,-0.5) ),        # slope -0.5 #1
+            (255,32,255,255) : ( (3,0),Color('white'), (0,15,-0.5) ),        # slope -0.5 #2
+            (255,64,255,255) : ( (0,6), Color('white'), (0,31,-1.0) ),        # slope -1 #2
         }
