@@ -86,7 +86,38 @@ class Map:
                     #print "Warning: Color [ %s ] has no associated surface" % str(color)
                     self._tiles[ (i,j) ] = (None,None)
 
-    def get_h_slope( self, real_x ):
+
+    def get_cell( self, x, y ):
+        if x < 0 or x >= self.w:
+            raise Exception("x out of bounds: %s" % x )
+        if y < 0 or y >= self.h:
+            raise Exception("y out of bounds: %s" % y )
+        return self._tiles[ (x,y) ][0]
+
+
+    def get_slope( self, x ):
+        # retutn the slope of tile x... XXX: hey, include 'y' too!
+        x = x / TILE_SIZE
+        for i in range( self.h ):
+            surf,cell_conf= self._tiles[ (x,i) ]
+            if surf:
+                return cell_conf[Map.TILE_SLOPE][2]
+        return 0.0
+
+    def get_h( self, real_x, real_y ):
+        x = real_x / TILE_SIZE
+        y = real_y / TILE_SIZE
+        mod_x = real_x % TILE_SIZE
+       
+        surf,cell_conf= self._tiles[ (x,y) ]
+        if surf:
+            m = cell_conf[Map.TILE_SLOPE][2] * mod_x + cell_conf[Map.TILE_SLOPE][1]
+            new_m = (TILE_SIZE-1) - m
+            ret = (self.h-y) * TILE_SIZE - new_m
+            return ret
+        return 0
+
+    def get_h_and_slope( self, real_x ):
         # retutn the height for x, and the slope
         x = real_x / TILE_SIZE
         mod_x = real_x % TILE_SIZE
@@ -99,13 +130,32 @@ class Map:
                 return (ret, cell_conf[Map.TILE_SLOPE][2] )
         return (0,0.0)
 
-    def get_cell( self, x, y ):
-        if x < 0 or x >= self.w:
-            raise Exception("x out of bounds: %s" % x )
-        if y < 0 or y >= self.h:
-            raise Exception("y out of bounds: %s" % y )
-        return self._tiles[ (x,y) ][0]
 
+    def is_collision_right( self, x, y ):
+        if x % TILE_SIZE <  TILE_SIZE  / 2:
+            return False
+        limit_x = (x / TILE_SIZE) * TILE_SIZE
+        h1,s = self.get_h_and_slope( limit_x + TILE_SIZE - 1)
+        h2,s = self.get_h_and_slope( limit_x + TILE_SIZE )
+
+        if y > h2:
+            return False
+        if h2 - h1 > 5:
+            return True
+        return False
+
+    def is_collision_left( self, x,y ):
+        if x % TILE_SIZE >  TILE_SIZE  / 2:
+            return False
+        limit_x = (x / TILE_SIZE) * TILE_SIZE
+        h1,s = self.get_h_and_slope( limit_x )
+        h2,s = self.get_h_and_slope( limit_x - 1 )
+
+        if y > h2:
+            return False
+        if h2 - h1 > 5:
+            return True
+        return False
 
 class DownHillMap(Map):
     def init( self, args, kw):

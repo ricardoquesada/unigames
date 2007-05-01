@@ -14,7 +14,6 @@ from game import Game
 
 
 class UnicycleEntity(EntityNode):
-#    image = "data/unicycle.png"
     layer = "sprites"
 
     def init(self):
@@ -64,22 +63,29 @@ class UnicycleEntity(EntityNode):
         self.ticker += 1
 
         x = int( self.x )
-        y = int( self.y ) + self._get_height() / 2
-        y = (Game.map.h * TILE_SIZE) - y
-        h,s = Game.map.get_h_slope(x)
+        base_y = int( self.y ) + self._get_height() / 2
+        y = (Game.map.h * TILE_SIZE) - base_y
+        h,s = Game.map.get_h_and_slope(x)
 
         self.move.vy += GRAVITY
 
-        if y <= h: # bounce
+        if y <= h:
+
+            # free falling
             if self.move.vy > 0:
+
+                # bounce
                 self.move.vx =  self.move.vx - (self.move.vy/2) * s
                 self.move.vy =  - self.move.vy / 3
                 if abs(self.move.vy) < 10:
                     self.move.vy = 0
                     self.on_floor = True
 
+            # climbing
+            if self.move.vy == 0:
+                self.y -=  h-y
 
-        # decrese X velocity
+        # always decrese X velocity. should surface be important ?
         if self.move.vx < 0:
             self.move.vx += 5
         elif self.move.vx > 0:
@@ -87,12 +93,26 @@ class UnicycleEntity(EntityNode):
 
         if self.x < 50:
             self.x = 50
+        elif self.x > Game.map.w * TILE_SIZE - 50:
+            self.x = Game.map.w * TILE_SIZE -50
+
+        # check vertical collision
+        if self.move.vx > 0 and Game.map.is_collision_right( x, y ):
+            self.move.vx =- self.move.vx
+
+        if self.move.vx < 0 and Game.map.is_collision_left( x, y ):
+            self.move.vx =- self.move.vx
+
 
     def ride_left( self ):
-        self.move.vx = -70
+        s = Game.map.get_slope( int(self.x) )
+        self.move.vx = min( -70 - s * 15, self.move.vx )
+
 
     def ride_right( self ):
-        self.move.vx = 70
+        s = Game.map.get_slope( int(self.x) )
+        self.move.vx = max( 70 - s * 15, self.move.vx )
+
 
     def jump( self ):
         if self.on_floor == True:
