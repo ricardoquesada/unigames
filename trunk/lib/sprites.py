@@ -29,7 +29,6 @@ class UnicycleEntity(EntityNode):
         self.y = 300
 
         self.ticker = 0
-        self.jumping = False
         self.on_floor = False
 
     def get_bounding_rect( self ):
@@ -63,27 +62,24 @@ class UnicycleEntity(EntityNode):
             self.frames[ x ].do( Show() )
         
         self.ticker += 1
-        if self.jumping == False:
-            x = int( self.x )
-            y = int( self.y ) + self._get_height() / 2
-            y = (Game.map.h * TILE_SIZE) - y
-            h,s = Game.map.get_h_slope(x)
 
-            if y > h:
-                self.move.add_velocity(0, GRAVITY)
-                self.on_floor = False
-            else:
-                if self.move.vy > 0:
-                    self.move.vy =  - self.move.vy / 3
-                else:
+        x = int( self.x )
+        y = int( self.y ) + self._get_height() / 2
+        y = (Game.map.h * TILE_SIZE) - y
+        h,s = Game.map.get_h_slope(x)
+
+        self.move.vy += GRAVITY
+
+        if y <= h: # bounce
+            if self.move.vy > 0:
+                self.move.vx =  self.move.vx - (self.move.vy/2) * s
+                self.move.vy =  - self.move.vy / 3
+                if abs(self.move.vy) < 10:
+                    self.move.vy = 0
                     self.on_floor = True
 
-        else:
-            self.move.vy *= 0.9
-            if self.move.vy > -10:
-                self.move.vy = 0
-                self.jumping = False
 
+        # decrese X velocity
         if self.move.vx < 0:
             self.move.vx += 5
         elif self.move.vx > 0:
@@ -92,7 +88,6 @@ class UnicycleEntity(EntityNode):
         if self.x < 50:
             self.x = 50
 
-
     def ride_left( self ):
         self.move.vx = -70
 
@@ -100,7 +95,6 @@ class UnicycleEntity(EntityNode):
         self.move.vx = 70
 
     def jump( self ):
-        if self.on_floor == True and self.jumping == False:
-            self.jumping = True
+        if self.on_floor == True:
             self.on_floor = False
-            self.move.vy = -200
+            self.move.vy = - 200
