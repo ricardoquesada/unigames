@@ -58,7 +58,6 @@ class Map:
         try:
             return self._tile_cache[(x,y)]
         except KeyError:
-            print "ouch (%d,%d)" % (x,y)
             x = x * ( TILE_SIZE + 1) + 1
             y = y * ( TILE_SIZE + 1) + 1
             surf = self.spritesheet.imgat((x,y, TILE_SIZE, TILE_SIZE),color)
@@ -116,4 +115,8 @@ class DownHillMap(Map):
             (255,255,64,255) : ( (17,0), None, (0,31,0.0) ),        # line tile #2
 
             (255,255,32,255) : ( (0,1), None, (0,31,0.0) ),        # dirt
+
+            (255,0,255,255) : ( (2,0), None, (0,31,-0.5) ),        # slope -0.5 #1
+            (255,32,255,255) : ( (3,0), None, (0,15,-0.5) ),        # slope -0.5 #2
+            (255,64,255,255) : ( (4,1), None, (0,31,-1.0) ),        # slope -1 #2
         }

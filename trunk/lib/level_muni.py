@@ -34,7 +34,7 @@ class LevelMuni(Scene):
         self.sprite_init()
 
         self.draw_tiles()
-#        self.music_init()
+        self.music_init()
 
     def music_init( self ):
         sound.init_music()
