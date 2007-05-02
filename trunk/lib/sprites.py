@@ -87,7 +87,7 @@ class UnicycleEntity(EntityNode):
                     self.move.vy = 0
                     self.on_floor = True
 
-            # climbing
+            # going up
             if self.move.vy == 0:
                 self.y -=  h-y
 
