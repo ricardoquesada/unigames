@@ -7,4 +7,4 @@ helper functions.
 
 XXX TODO: short description of each sub-package here.
 """
-__version__ = "0.9.5"
+__version__ = "0.9.6-unofficial"

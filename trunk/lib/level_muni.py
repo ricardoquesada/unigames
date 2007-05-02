@@ -120,8 +120,12 @@ class LevelMuni(Scene):
             self.uni_sprite.ride_left()
         elif k[K_RIGHT]:
             self.uni_sprite.ride_right()
+       
+        if k[K_SPACE]:
+            self.uni_sprite.mega_jump()
+
         if k[K_ESCAPE]:
             director.quit()
-
+        
     def collision_unicycle_floor(self, unicycle, floor):
         print "collision (%d,%d) (%d,%d)" % (unicycle.x, unicycle.y, floor.x,floor.y)

@@ -16,6 +16,9 @@ from game import Game
 class UnicycleEntity(EntityNode):
     layer = "sprites"
 
+    HS_X = 0.5
+    HS_Y = 0.73
+
     def init(self):
 
         self.load_frames()
@@ -43,7 +46,10 @@ class UnicycleEntity(EntityNode):
             for x in range(5):
                 load_x = x * (UNI_SPRITE_X + 1) + 1
                 load_y = y * (UNI_SPRITE_Y + 1) + 1
-                self.frames.insert(0, Entity(sheet.imgat( (load_x, load_y, UNI_SPRITE_X-1, UNI_SPRITE_Y-15), -1)) )
+                self.frames.insert( 0, 
+                    Entity(
+                        sheet.imgat( (load_x, load_y, UNI_SPRITE_X-1, UNI_SPRITE_Y-14), -1),
+                        hotspot=(UnicycleEntity.HS_X, UnicycleEntity.HS_Y) ) )
                 self.frames[0].attach_to( self )
                 self.frames[0].do( Hide() )
 
@@ -63,7 +69,7 @@ class UnicycleEntity(EntityNode):
         self.ticker += 1
 
         x = int( self.x )
-        base_y = int( self.y ) + self._get_height() / 2
+        base_y = int( self.y ) + self._get_height() * (1-UnicycleEntity.HS_Y)
         y = (Game.map.h * TILE_SIZE) - base_y
         h,s = Game.map.get_h_and_slope(x)
 
@@ -113,6 +119,11 @@ class UnicycleEntity(EntityNode):
         s = Game.map.get_slope( int(self.x) )
         self.move.vx = max( 70 - s * 15, self.move.vx )
 
+    def mega_jump( self ):
+        if self.turn.anglev == 0:
+            self.turn.set_velocity(180)
+        else:
+            self.turn.set_velocity(0)
 
     def jump( self ):
         if self.on_floor == True:

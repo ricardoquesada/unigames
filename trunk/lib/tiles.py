@@ -183,9 +183,9 @@ class DownHillMap(Map):
             (255,160,255,255) : ( (6,3), Color('white'), (0,31,-1.0) ),        # slope -1 #2
             (255,192,255,255) : ( (7,4), Color('white'), (0,31,-1.0) ),        # slope -1 #2
 
-            (0,255,255,255) : ( (7,3), Color('white'), (0,31,-0.3) ),          # walk slope
+            (0,255,255,255) : ( (7,3), Color('white'), (0,31,-0.4) ),          # walk slope
             (32,255,255,255) : ( (8,3), Color('white'), (0,21,-0.3) ),          # walk slope
             (64,255,255,255) : ( (9,3), Color('white'), (0,11,0.0) ),          # walk slope
-            (96,255,255,255) : ( (10,3), Color('white'), (0,11,0.3) ),          # walk slope
+            (96,255,255,255) : ( (10,3), Color('white'), (0,11,0.4) ),          # walk slope
             (128,255,255,255) : ( (11,3), Color('white'), (0,21,0.3) ),          # walk slope
         }
