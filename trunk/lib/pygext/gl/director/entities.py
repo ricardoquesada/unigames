@@ -63,7 +63,7 @@ class EntityNode(Node):
             name = shape
             shape = resources.get_bitmap(name, hotspot)
         elif isinstance(shape, pygame.Surface):
-            shape = Bitmap(shape)
+            shape = Bitmap(shape,hotspot)
         if shape is not None and shape._listid is None:
             shape.compile()
         self.shape = shape
