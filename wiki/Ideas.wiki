@@ -1,4 +1,4 @@
-#summary One-sentence summary of this page.
+#summary UNIGAMES, a unicycle game
 
 = Introduction =
 
@@ -6,11 +6,8 @@ The idea is to make a sort of olympics games oriented to the unicycle.
 The selected games could be the ones that are played in the "unicons"
 http://en.wikipedia.org/wiki/UNICON
 
-The idea is to have a "retro" look in the game. Python using pygame will be used.
+A _retro_ look is desireble.
+
 = Details =
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
-
+  * Language: Python
+  * Other libraries: pygame, pygext, pyode
