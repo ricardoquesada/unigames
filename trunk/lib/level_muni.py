@@ -16,9 +16,7 @@ class LevelMuni(Scene):
 
     def enter(self, game):
         self.game = game
-#        Game.map = tiles.WfxMap('level_muni_1.tga')
-#        Game.map = tiles.OldMap('level_muni.bmp')
-        Game.map = tiles.DownHillMap( map_name = 'level_muni_2.tga', sprite_sheet = 'tiles_2.png')
+        Game.map = tiles.DownHillMap( map_name = 'level_muni_2.tga', sprite_sheet = 'tiles_3.tga')
         self.new_layer("particles", 20, camera = True)
         self.new_layer("sprites", 15, camera = True)
         self.new_layer("score_panel", 10, camera = False)
@@ -76,7 +74,7 @@ class LevelMuni(Scene):
     def draw_tiles( self ):
         for i in range(Game.map.w):
             for j in range(Game.map.h):
-                c = Game.map.get_cell(i,j)
+                c = Game.map.get_tile(i,j)
                 if c is not None:
                     self.add("tiles", c )
                     c.set( left=i*TILE_SIZE, top=j*TILE_SIZE)
