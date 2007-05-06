@@ -5,8 +5,8 @@ import os
 from euclid import *
 from pygame.color import Color
 
-TW = 32
-TH = 32
+TW = 32     # TILE WIDTH SIZE
+TH = 32     # TILE HEIGHT SIZE
 TILE_SIZE = 32
 
 def imgcolorkey(image, colorkey):
@@ -58,8 +58,9 @@ class Map:
     # function "stealed" from: the old battleaxe 4
     def load_level(self, fname):
         img = pygame.image.load(fname)
-        #return [[[img.get_at((x,y))[n] for x in xrange(0,img.get_width())] for y in xrange(0,img.get_height())] for n in xrange(0,4)]
-        self.w,self.h = img.get_width(),img.get_height()
+        self.w = img.get_width()
+        self.h = img.get_height()
+
         l = [[[0 for x in xrange(0,self.w)] for y in xrange(0,self.h)] for n in xrange(0,3)]
         for y in xrange(0,self.h):
             for x in xrange(0,self.w):
@@ -94,65 +95,54 @@ class Map:
             return None
         return Entity( self._tiles[c] )
 
-    def get_slope( self, x ):
-        # retutn the slope of tile x... XXX: hey, include 'y' too!
-        x = x / TILE_SIZE
-        for i in range( self.h ):
-            c = self.get_tile_config(x,i)
+    def get_slope( self, real_x ):
+        # retutn the height for x, and the slope
+        x = real_x / TW 
+        mod_x = real_x % TW
+        for i in xrange( self.h ):
+            c = self.get_tile_config( x, i)
             if c:
                 return c[2]
-        return 0.0
+        return (0.0)
 
-    def get_h( self, real_x, real_y ):
-        x = real_x / TILE_SIZE
-        y = real_y / TILE_SIZE
-        mod_x = real_x % TILE_SIZE
-       
-        c = self.get_tile_config(x,y)
-        if c:
-            m = c[2] * mod_x + c[1]
-            new_m = (TILE_SIZE-1) - m
-            ret = (self.h-y) * TILE_SIZE - new_m
-            return ret
-        return 0
 
-    def get_h_and_slope( self, real_x ):
+    def get_h_and_slope( self, real_x, real_y ):
         # retutn the height for x, and the slope
-        x = real_x / TILE_SIZE
-        mod_x = real_x % TILE_SIZE
-        for i in range( self.h ):
+        x = real_x / TW 
+        y = int(real_y / TH)
+        mod_x = real_x % TW
+        for i in xrange( y, self.h ):
             c = self.get_tile_config( x, i)
             if c:
                 m = c[2] * mod_x + c[1]
-                new_m = (TILE_SIZE-1) - m
-                ret = (self.h-i) * TILE_SIZE - new_m
+                ret = i * TH - m
                 return (ret, c[2] )
-        return (0,0.0)
+        return (self.h * TH,0.0)
 
 
     def is_collision_right( self, x, y ):
-        if x % TILE_SIZE <  TILE_SIZE  / 2:
+        if x % TW <  TW / 2:
             return False
-        limit_x = (x / TILE_SIZE) * TILE_SIZE
-        h1,s = self.get_h_and_slope( limit_x + TILE_SIZE - 1)
-        h2,s = self.get_h_and_slope( limit_x + TILE_SIZE )
+        limit_x = (x / TW) * TW
+        h1,s = self.get_h_and_slope( limit_x + TW - 1, y)
+        h2,s = self.get_h_and_slope( limit_x + TW, y )
 
-        if y > h2:
+        if y < h2:
             return False
-        if h2 - h1 > 5:
+        if h1 - h2 > 5:
             return True
         return False
 
-    def is_collision_left( self, x,y ):
-        if x % TILE_SIZE >  TILE_SIZE  / 2:
+    def is_collision_left( self, x, y ):
+        if x % TW >  TW / 2:
             return False
-        limit_x = (x / TILE_SIZE) * TILE_SIZE
-        h1,s = self.get_h_and_slope( limit_x )
-        h2,s = self.get_h_and_slope( limit_x - 1 )
+        limit_x = (x / TW ) * TW
+        h1,s = self.get_h_and_slope( limit_x, y )
+        h2,s = self.get_h_and_slope( limit_x - 1, y )
 
-        if y > h2:
+        if y < h2:
             return False
-        if h2 - h1 > 5:
+        if h1 - h2 > 5:
             return True
         return False
     
@@ -176,26 +166,37 @@ class DownHillMap(Map):
 
 # slopes down
 0x01: (0,10,-0.3),
-0x01: (0,10,-0.3),
 0x02: (0,31,-1.0),
 0x04: (0,31,-1.0),
 0x10: (0,31,-1),
-0x07: (0,31,-0.48),
+0x31: (0,31,-1.0), #dino
+0x42: (0,31,-1.0), #dino
+0x53: (0,31,-1.0), #dino
 
 # down and up
+0x07: (0,31,-0.48),
 0x12: (0,31,-0.48),
 0x13: (0,17,-0.161),
 0x14: (0,12, 0.161),
 0x15: (0,16, 0.48),
+0x17: (0,16,0.48),
+
 
 # slopes up
 0x06: (0,0,1.0),
 0x16: (0,0,0.6),
-0x17: (0,16,0.48),
 0x46: (0,0,1),
 
 # dirt
 0x30: (0,31,0.0),
+0x40: (0,31,0.0), #dino
+0x41: (0,31,0.0), #dino
+0x50: (0,31,0.0), #dino
+0x51: (0,31,0.0), #dino
+0x52: (0,31,0.0), #dino
+0x60: (0,31,0.0), #dino
+0x61: (0,31,0.0), #dino
+0x62: (0,31,0.0), #dino
 
 }
 

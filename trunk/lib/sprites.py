@@ -72,11 +72,11 @@ class UnicycleEntity(EntityNode):
         x = int( self.x )
         base_y = int( self.y ) + self._get_height() * (1-UnicycleEntity.HS_Y)
         self.y2 = (Game.map.h * TILE_SIZE) - base_y
-        h,s = Game.map.get_h_and_slope(x)
+        h,s = Game.map.get_h_and_slope(x, self.y )
 
         self.move.vy += GRAVITY
 
-        if self.y2 <= h:
+        if self.y > h:
 
             # free falling
             if self.move.vy > 0:
@@ -90,7 +90,7 @@ class UnicycleEntity(EntityNode):
 
             # going up
             if self.move.vy == 0:
-                self.y -=  h-self.y2
+                self.y = h
 
         # always decrese X velocity. should surface be important ?
         if self.move.vx < 0:
@@ -104,10 +104,10 @@ class UnicycleEntity(EntityNode):
             self.x = Game.map.w * TILE_SIZE -50
 
         # check vertical collision
-        if self.move.vx > 0 and Game.map.is_collision_right( x, self.y2 ):
+        if self.move.vx > 0 and Game.map.is_collision_right( x, self.y ):
             self.move.vx =- self.move.vx
 
-        if self.move.vx < 0 and Game.map.is_collision_left( x, self.y2 ):
+        if self.move.vx < 0 and Game.map.is_collision_left( x, self.y ):
             self.move.vx =- self.move.vx
 
 
