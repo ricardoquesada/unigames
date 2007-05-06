@@ -2,12 +2,15 @@
 
 = Introduction =
 
-The idea is to make a sort of olympics games oriented to the unicycle.
-The selected games could be the ones that are played in the "unicons"
-http://en.wikipedia.org/wiki/UNICON
+The idea is to make a sort of unicycle olympics games.
+The selected sports could be the ones that are played in the [http://en.wikipedia.org/wiki/UNICON _UNICONS_]
 
-A _retro_ look is desireble.
+A _retro_ look is desirable.
 
 = Details =
-  * Language: Python
-  * Other libraries: pygame, pygext, pyode
+  * Language: [http://www.python.org Python]
+  * Additional libraries that might be used:
+    * [http://www.pygame.org pygame]
+    * [http://opioid-interactive.com/~shang/projects/pygext/ pygext]
+    * [http://pyode.sourceforge.net pyode]
+    * [http://http://www.imitationpickles.org/pgu/wiki/index pgu]
