@@ -44,16 +44,16 @@ class LevelMuni(Scene):
     def score_init( self ):
         self.pixel_font = GLFont( pygame.font.Font("data/V5PRC___.ttf",19) )
         self.score_text = TextEntity( self.pixel_font, "" )
-        self.score_text.set( centerx = 0, centery = 20, color = (255,255,255,255) )
+        self.score_text.set( centerx = 0, centery = 10, color = (255,255,255,255) )
         self.score_text.place("score_panel")
 
         self.pos_text= TextEntity( self.pixel_font, "" )
-        self.pos_text.set( centerx = 0, centery = 50, color = (255,255,255,255) )
+        self.pos_text.set( centerx = 0, centery = 30, color = (255,255,255,255) )
         self.pos_text.place("score_panel")
 
-        self.power_bar = Entity("data/power_bar.png")
-        self.power_bar.set( centerx = SCREEN_RES_X /2, centery = 20 )
-        self.power_bar.place("score_panel")
+#        self.power_bar = Entity("data/power_bar.png")
+#        self.power_bar.set( centerx = SCREEN_RES_X /2, centery = 20 )
+#        self.power_bar.place("score_panel")
 
         self.unicycle_lifes = [ Entity("data/unicycle_life.png"),Entity("data/unicycle_life.png"),Entity("data/unicycle_life.png") ]
         for i,e in enumerate(self.unicycle_lifes):
@@ -106,7 +106,13 @@ class LevelMuni(Scene):
 
     def update_score( self ):
         self.score_text.set_text("score: %d" % self.game.score )
-        self.pos_text.set_text("x: %d, y: %d" % (self.uni_sprite.x, self.uni_sprite.y) )
+        self.pos_text.set_text("x: %d, y: %d, tx: %d, ty: %d, tt: %x" %
+            (self.uni_sprite.x,
+            self.uni_sprite.y+23,
+            int(self.uni_sprite.x / TILE_SIZE),
+            int((self.uni_sprite.y+23) / TILE_SIZE),
+            Game.map.get_tile_type( int(self.uni_sprite.x / TILE_SIZE), int((self.uni_sprite.y+23) / TILE_SIZE) ),
+            ) )
 
     def check_keyboard( self ):
         k = pygame.key.get_pressed()

@@ -29,6 +29,7 @@ class UnicycleEntity(EntityNode):
         self.add_collnode("unicycle", 30,-10,40)
         self.x = 150
         self.y = 300
+        self.y2 = 0
 
         self.ticker = 0
         self.on_floor = False
@@ -70,12 +71,12 @@ class UnicycleEntity(EntityNode):
 
         x = int( self.x )
         base_y = int( self.y ) + self._get_height() * (1-UnicycleEntity.HS_Y)
-        y = (Game.map.h * TILE_SIZE) - base_y
+        self.y2 = (Game.map.h * TILE_SIZE) - base_y
         h,s = Game.map.get_h_and_slope(x)
 
         self.move.vy += GRAVITY
 
-        if y <= h:
+        if self.y2 <= h:
 
             # free falling
             if self.move.vy > 0:
@@ -89,7 +90,7 @@ class UnicycleEntity(EntityNode):
 
             # going up
             if self.move.vy == 0:
-                self.y -=  h-y
+                self.y -=  h-self.y2
 
         # always decrese X velocity. should surface be important ?
         if self.move.vx < 0:
@@ -103,17 +104,16 @@ class UnicycleEntity(EntityNode):
             self.x = Game.map.w * TILE_SIZE -50
 
         # check vertical collision
-        if self.move.vx > 0 and Game.map.is_collision_right( x, y ):
+        if self.move.vx > 0 and Game.map.is_collision_right( x, self.y2 ):
             self.move.vx =- self.move.vx
 
-        if self.move.vx < 0 and Game.map.is_collision_left( x, y ):
+        if self.move.vx < 0 and Game.map.is_collision_left( x, self.y2 ):
             self.move.vx =- self.move.vx
 
 
     def ride_left( self ):
         s = Game.map.get_slope( int(self.x) )
         self.move.vx = min( -70 - s * 15, self.move.vx )
-
 
     def ride_right( self ):
         s = Game.map.get_slope( int(self.x) )
