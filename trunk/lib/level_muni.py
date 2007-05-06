@@ -106,13 +106,12 @@ class LevelMuni(Scene):
 
     def update_score( self ):
         self.score_text.set_text("score: %d" % self.game.score )
-        self.pos_text.set_text("y: %d, y2: %d, tx: %d, ty: %d, tt: %x, diff: %d" %
-            (self.uni_sprite.y,
-            self.uni_sprite.y2,
+        self.pos_text.set_text("x: %d, y: %d, tx: %d, ty: %d, tt: %x" %
+            (self.uni_sprite.x,
+            self.uni_sprite.y,
             int(self.uni_sprite.x / TILE_SIZE),
             int((self.uni_sprite.y+23) / TILE_SIZE),
             Game.map.get_tile_type( int(self.uni_sprite.x / TILE_SIZE), int((self.uni_sprite.y+23) / TILE_SIZE) ),
-            self.uni_sprite.y2 - self.uni_sprite.y,
             ) )
 
     def check_keyboard( self ):

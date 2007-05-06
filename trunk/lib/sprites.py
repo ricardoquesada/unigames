@@ -29,7 +29,8 @@ class UnicycleEntity(EntityNode):
         self.add_collnode("unicycle", 30,-10,40)
         self.x = 150
         self.y = 300
-        self.y2 = 0
+        self.y_top = int( UnicycleEntity.HS_Y * self.height )
+        self.y_bottom =  self.height - self.y_top
 
         self.ticker = 0
         self.on_floor = False
@@ -49,7 +50,7 @@ class UnicycleEntity(EntityNode):
                 load_y = y * (UNI_SPRITE_Y + 1) + 1
                 self.frames.insert( 0, 
                     Entity(
-                        sheet.imgat( (load_x, load_y, UNI_SPRITE_X-1, UNI_SPRITE_Y-14), -1),
+                        sheet.imgat( (load_x, load_y, UNI_SPRITE_X-1, UNI_SPRITE_Y-12), -1),
                         hotspot=(UnicycleEntity.HS_X, UnicycleEntity.HS_Y) ) )
                 self.frames[0].attach_to( self )
                 self.frames[0].do( Hide() )
@@ -60,7 +61,7 @@ class UnicycleEntity(EntityNode):
 
     def tick(self):
 
-        # show correct frame
+        # display correct uni frame
         x = int( (self.x % 120) / 6 )
         if x != self.frame_shown:
             self.frames[ self.frame_shown ].do( Hide() )
@@ -70,13 +71,11 @@ class UnicycleEntity(EntityNode):
         self.ticker += 1
 
         x = int( self.x )
-        base_y = int( self.y ) + self._get_height() * (1-UnicycleEntity.HS_Y)
-        self.y2 = (Game.map.h * TILE_SIZE) - base_y
-        h,s = Game.map.get_h_and_slope(x, self.y )
+        h,s = Game.map.get_h_and_slope(x, self.y - self.y_top )
 
         self.move.vy += GRAVITY
 
-        if self.y > h:
+        if (self.y + self.y_bottom ) > h:
 
             # free falling
             if self.move.vy > 0:
@@ -90,7 +89,8 @@ class UnicycleEntity(EntityNode):
 
             # going up
             if self.move.vy == 0:
-                self.y = h
+                self.y = h - self.y_bottom
+
 
         # always decrese X velocity. should surface be important ?
         if self.move.vx < 0:
@@ -104,10 +104,10 @@ class UnicycleEntity(EntityNode):
             self.x = Game.map.w * TILE_SIZE -50
 
         # check vertical collision
-        if self.move.vx > 0 and Game.map.is_collision_right( x, self.y ):
+        if self.move.vx > 0 and Game.map.is_collision_right( self ):
             self.move.vx =- self.move.vx
 
-        if self.move.vx < 0 and Game.map.is_collision_left( x, self.y ):
+        if self.move.vx < 0 and Game.map.is_collision_left( self ):
             self.move.vx =- self.move.vx
 
 

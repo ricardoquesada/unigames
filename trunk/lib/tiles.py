@@ -115,32 +115,34 @@ class Map:
             c = self.get_tile_config( x, i)
             if c:
                 m = c[2] * mod_x + c[1]
-                ret = i * TH - m
+                ret = (i+1) * TH - m
                 return (ret, c[2] )
         return (self.h * TH,0.0)
 
 
-    def is_collision_right( self, x, y ):
+    def is_collision_right( self, sprite ):
+        x,y = int( sprite.x ), int( sprite.y)
         if x % TW <  TW / 2:
             return False
         limit_x = (x / TW) * TW
         h1,s = self.get_h_and_slope( limit_x + TW - 1, y)
         h2,s = self.get_h_and_slope( limit_x + TW, y )
 
-        if y < h2:
+        if y <= h2:
             return False
         if h1 - h2 > 5:
             return True
         return False
 
-    def is_collision_left( self, x, y ):
+    def is_collision_left( self, sprite ):
+        x,y = int( sprite.x ), int( sprite.y)
         if x % TW >  TW / 2:
             return False
         limit_x = (x / TW ) * TW
         h1,s = self.get_h_and_slope( limit_x, y )
         h2,s = self.get_h_and_slope( limit_x - 1, y )
 
-        if y < h2:
+        if y <= h2:
             return False
         if h1 - h2 > 5:
             return True
