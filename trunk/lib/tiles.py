@@ -55,7 +55,6 @@ class Map:
         # defined in subclasses
         pass
 
-    # function "stealed" from: the old battleaxe 4
     def load_level(self, fname):
         img = pygame.image.load(fname)
         self.w = img.get_width()
@@ -70,11 +69,11 @@ class Map:
                 l[2][y][x] = b
         return l
 
-    # function "stealed" from: the old battleaxe 4
     def load_tiles(self, fname):
         img = pygame.image.load(fname).convert_alpha()
-        w,h = img.get_width()/TW,img.get_height()/TH
-        return [ img.subsurface((n%w)*TW,(n/w)*TH,TW,TH) for n in xrange(0,w*h)]
+        self.tiles_x = img.get_width()/TW
+        self.tiles_y = img.get_height()/TH
+        return [ img.subsurface((n%self.tiles_x)*TW,(n/self.tiles_x)*TH,TW,TH) for n in xrange(0,self.tiles_x*self.tiles_y)]
 
 
     def get_tile_type( self, x, y ):
@@ -94,6 +93,28 @@ class Map:
         if c == 0:
             return None
         return Entity( self._tiles[c] )
+
+    def init_tiles_with_lines( self, override_tiles = None ):
+        # setup the lines
+        # find the upper left point, the upper right point, and trace a line
+        # that line will be the floor of this tile
+        for t in xrange( 1, self.tiles_x * self.tiles_y):   # skip tile 0. it is transparent
+            s = self._tiles[t]
+            dirt = [TH-1,TH-1]
+            for x in (0,TW-1):
+                for y in xrange(TH-1):
+                    r,g,b,a = s.get_at( (x,y) )         # tiles are in the r channel
+                    if r != 0:
+                        xx = min(x,1)                   # convert x to 0 or 1
+                        dirt[xx] = y
+                        break
+            slope = (dirt[1] - dirt[0]) / float( (TW-1) )
+            self._tiles_config[ t ] = ( 0, (TH-1)-dirt[0], -slope )
+
+        if override_tiles:
+            for k in override_tiles.keys():
+                self._tiles_config[ k ] = override_tiles[ k ]
+
 
     def get_slope( self, real_x ):
         # retutn the height for x, and the slope
@@ -153,52 +174,18 @@ class DownHillMap(Map):
         pass
 
     def init_tiles( self):
-        self._tiles_config= {
+        tiles_config= {
 
 #key: tile id, value: (x,y,slope)
 
-# transparent tile
-#0x00: (0,31,0.0),
+# overwrite special tiles
+# dino
+0x31: (0,31,-1.0), # slope down
+0x42: (0,31,-1.0), # slope down
+0x53: (0,31,-1.0), # slope down
 
-# floor
-0x20: (0,31,0.0),
-0x21: (0,31,0.0),
-0x25: (0,31,0.0),
-0x26: (0,31,0.0),
-
-# slopes down
-0x01: (0,10,-0.3),
-0x02: (0,31,-1.0),
-0x04: (0,31,-1.0),
-0x10: (0,31,-1),
-0x31: (0,31,-1.0), #dino
-0x42: (0,31,-1.0), #dino
-0x53: (0,31,-1.0), #dino
-
-# down and up
-0x07: (0,31,-0.48),
-0x12: (0,31,-0.48),
-0x13: (0,17,-0.161),
-0x14: (0,12, 0.161),
-0x15: (0,16, 0.48),
-0x17: (0,16,0.48),
-
-
-# slopes up
-0x06: (0,0,1.0),
-0x16: (0,0,0.6),
-0x46: (0,0,1),
-
-# dirt
-0x30: (0,31,0.0),
-0x40: (0,31,0.0), #dino
-0x41: (0,31,0.0), #dino
-0x50: (0,31,0.0), #dino
-0x51: (0,31,0.0), #dino
-0x52: (0,31,0.0), #dino
-0x60: (0,31,0.0), #dino
-0x61: (0,31,0.0), #dino
-0x62: (0,31,0.0), #dino
-
+0x32: None,         # head
+0x33: None,         # head
+0x43: None,         # head
 }
-
+        self.init_tiles_with_lines( tiles_config )
