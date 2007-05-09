@@ -87,7 +87,7 @@ class LevelMuni(Scene):
         if cy < -SKY_LIMIT:
             cy = -SKY_LIMIT
         elif cy > 0:
-            cy /= 1.5
+            cy /= 1.1
         if cx < 0:
             cx = 0
         if cx > Game.map.w * TILE_SIZE:
