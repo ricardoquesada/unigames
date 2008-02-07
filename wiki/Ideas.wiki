@@ -9,7 +9,9 @@ A _retro_ look is desirable.
 
 = Details =
   * Language: [http://www.python.org Python]
-  * Additional libraries that might be used:
+  * Extensions:
+    * [http://www.pyglet.org pyglet]
+  * Old libraries:
     * [http://www.pygame.org pygame]
     * [http://opioid-interactive.com/~shang/projects/pygext/ pygext]
     * [http://pyode.sourceforge.net pyode]
