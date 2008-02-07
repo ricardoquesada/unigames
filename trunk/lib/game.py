@@ -6,7 +6,7 @@ import director
 
 class GameMenu(Menu):
     def __init__( self ):
-        super( GameMenu, self ).__init__( self, title="UNIGAMES", options=("New Game", "Scores", "Options", "Full Screen", "Quit" ) )
+        super( GameMenu, self ).__init__( self, title="UNIGAMES", options=("New Game", "Scores", "Options", "Quit" ) )
 
 
 def run():

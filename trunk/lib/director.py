@@ -6,6 +6,7 @@
 
 from pyglet import window
 from pyglet import clock
+from pyglet import media
 
 # Singleton
 class _Singleton( window.Window ):
@@ -25,7 +26,10 @@ class _Singleton( window.Window ):
             dt = clock.tick()
 
             self.dispatch_events()
+            media.dispatch_events()
+
             scene.dispatch_events()
+
             self.clear()
 
             # Draws

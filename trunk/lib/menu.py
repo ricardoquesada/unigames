@@ -6,6 +6,8 @@
 from pyglet import font
 from scene import Scene, Layer
 from director import *
+
+from pyglet import media
 from pyglet import window
 
 class Menu(Scene):
@@ -35,7 +37,7 @@ class Menu(Scene):
 
         fo = font.load( self.font_options, self.font_options_size )
         fo_selected = font.load( self.font_options, self.font_options_selected_size )
-        fo_height = fo.ascent - fo.descent
+        fo_height = int ( (fo.ascent - fo.descent) * 0.9 )
 
         win = Director()
 
@@ -45,6 +47,7 @@ class Menu(Scene):
             halign=font.Text.CENTER,
             valign=font.Text.CENTER)
         text.visible = True
+        text.color = ( 1.0, 1.0, 1.0, 0.2 )
 
         title_layer.append( text )
 
@@ -53,20 +56,28 @@ class Menu(Scene):
             # Unselected option
             text = font.Text( fo, opt,
                 x=win.width / 2,
-                y=win.height - ft_height - 15 - (idx * (fo_height-5) ) ,
+                y=win.height / 2 + (fo_height * len(self.options) )/2 - (idx * fo_height ) ,
                 halign=font.Text.CENTER,
                 valign=font.Text.CENTER)
             text.visible = (idx != self.selected_option )
+            text.color = ( 0.8, 0.8, 0.8, 1.0 )
             options_layer.append( text )
 
             # Selected Option
             text = font.Text( fo_selected, opt,
                 x=win.width / 2,
-                y=win.height - ft_height - 15 - (idx * (fo_height-5) ) ,
+                y=win.height / 2 + (fo_height * len(self.options) )/2 - (idx * fo_height ) ,
                 halign=font.Text.CENTER,
                 valign=font.Text.CENTER)
             text.visible = ( idx == self.selected_option )
+            text.color = ( 1.0, 1.0, 1.0, 1.0 )
             options_layer.append( text )
+
+            # 
+            self.sound = media.load('data/menuchange.wav', streaming=False)
+
+    def dispatch_events( self ):
+        pass
 
     def enter( self ):
         Director().push_handlers( self.on_key_press )
@@ -93,6 +104,8 @@ class Menu(Scene):
 
             layer.get_item( self.selected_option *2 ).visible = False
             layer.get_item( self.selected_option *2 + 1 ).visible = True
+
+            self.sound.play()
 
         elif symbol == window.key.ENTER:
             print self.selected_option
