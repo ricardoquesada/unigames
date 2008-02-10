@@ -123,5 +123,5 @@ class Layer(object):
     def set_visible( self, flag=True):
         self.visible = flag
 
-    def get_item( self, i ):
-        return self.objects[ i ]
+    def __getitem__(self, index):
+        return self.objects[ index ]
