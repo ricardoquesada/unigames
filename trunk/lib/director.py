@@ -39,6 +39,7 @@ class Director( object ):
 
         self.scene = None
         self.next_scene = None
+        self.show_FPS = True
 
     def init( self, *args, **kw ):
         self.window = window.Window( *args, **kw )
@@ -52,6 +53,8 @@ class Director( object ):
     def pop_handlers( self ):
         self.window.pop_handlers()
 
+    def enable_FPS( self, value ):
+        self.show_FPS = value
 
     def run( self, scene ):
         """ director main loop """
@@ -87,10 +90,10 @@ class Director( object ):
             for s in self.scene:
                 s.draw()
 
-            fps_display.draw()      # FPS
+            if self.show_FPS:
+                fps_display.draw()      # FPS
 
             self.window.flip()
-
 
         for s in self.scene:
             s.exit()

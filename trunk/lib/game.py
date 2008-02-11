@@ -1,12 +1,14 @@
 __docformat__ = 'restructuredtext'
 __version__ = '$Id$'
 
+import sys
+
 from pyglet import image
 from pyglet.gl import *
 from pyglet import media
 
-from menu import Menu
-from scene import Scene
+from menu import Menu, MenuItem, ToggleMenuItem
+from scene import Scene, XorScene 
 from director import *
 
 class StartGame( Scene ):
@@ -23,14 +25,15 @@ class StartGame( Scene ):
         print "StartGame: draw()"
 
 
-class GameMenu(Menu):
+class MainMenu(Menu):
     def __init__( self ):
-        super( GameMenu, self ).__init__( self, title="GROSSINI'S SISTERS",
-                options=( ("New Game", self.on_new_game )
-                        , ("Scores", self.on_scores)
-                        , ("Options", self.on_options)
-                        , ("Quit", self.on_quit) )
-                        )
+        super( MainMenu, self ).__init__("GROSSINI'S SISTERS" )
+        self.items.append( MenuItem('New Game', self.on_new_game ) )
+        self.items.append( MenuItem('Options', self.on_options ) )
+        self.items.append( MenuItem('Scores', self.on_scores ) )
+        self.items.append( MenuItem('Quit', self.on_quit ) )
+        self.reset()
+
 
     # Callbacks
     def on_new_game( self ):
@@ -41,10 +44,34 @@ class GameMenu(Menu):
         print "ON SCORES"
 
     def on_options( self ):
-        print "ON OPTIONS"
+        self.switch_to( 1 )
 
     def on_quit( self ):
-        print "ON QUIT"
+        print 'xxxxxxxxxxxxx 1'
+        sys.exit()
+
+class OptionMenu(Menu):
+    def __init__( self ):
+        super( OptionMenu, self ).__init__("GROSSINI'S SISTERS" )
+        self.items.append( MenuItem('Fullscreen', self.on_fullscreen) )
+        self.items.append( ToggleMenuItem('Sound', True, self.on_sound) )
+        self.items.append( ToggleMenuItem('Show FPS', True, self.on_show_fps) )
+        self.items.append( MenuItem('OK', self.on_quit) )
+        self.reset()
+
+    # Callbacks
+    def on_fullscreen( self ):
+        pass
+
+    def on_sound( self, value ):
+        print "on_sound: %s" % value
+
+    def on_quit( self ):
+        print 'xxxxxxxxxxxxx 0'
+        self.switch_to( 0 )
+
+    def on_show_fps( self, value ):
+        director.enable_FPS( value )
 
 class AnimatedSprite( Scene ):
     def __init__( self ):
@@ -129,8 +156,17 @@ class OpenGLTest( Scene ):
 
 
 def run():
+
+    from pyglet import font
+
+    font.add_directory('data')
+
     director.init( caption = "Grossini's Sisters" )
-    director.run( ( OpenGLTest(), AnimatedSprite(), GameMenu() ) )
+    director.run( ( OpenGLTest(),
+                    AnimatedSprite(),
+                    XorScene(
+                        ( MainMenu(), OptionMenu() )
+                        ) ) )
 
 
 

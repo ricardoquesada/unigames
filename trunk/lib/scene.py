@@ -6,6 +6,7 @@
 #
 
 from pyglet import window
+from pyglet import event
 
 __all__ = [ 'Scene' ]
 
@@ -15,10 +16,6 @@ class Scene(object):
         super(Scene, self).__init__(*args, **kwargs)
 
         self.layers = {}
-        self.offset = (0,0)
-        self.zoom = 1.0
-
-        self.event_handler = {}
 
 
     ########################
@@ -37,7 +34,11 @@ class Scene(object):
         """ This method is called once per cycle. dt is "delta time" from the last tick."""
         pass  ## override in subclass
 
+
     def draw(self):
+        """ This method is called once per cycle. Subclasses shall draw everything.
+        Don't override this method if you want to work with layers
+        """
         for d,l in self.layers.itervalues():
             l.draw()
 
@@ -94,6 +95,45 @@ class Scene(object):
         pass
 
 
+#
+# XorScene
+# Exclusive-Or Scene.
+# An Exclusive-Or Scene is a Composite scene that only enables one scene at the time
+# This is useful, when you have 3 or 4 menus, but you want to show one at the
+# time
+#
+
+class XorScene( Scene ):
+    def __init__( self, scenes ):
+        super( XorScene, self ).__init__()
+
+        self.scenes = scenes
+        self.enabled_scene = 0
+
+        for s in self.scenes:
+            s.switch_to = self.switch_to
+
+    def switch_to( self, scene_number ):
+        if scene_number < 0 or scene_number >= len( self.scenes ):
+            raise Exception("XorScene: Invalid scene number")
+
+        self.scenes[ self.enabled_scene ].exit()
+        self.enabled_scene = scene_number
+        self.scenes[ self.enabled_scene ].enter()
+
+    def tick( self, dt):
+        self.scenes[ self.enabled_scene ].tick( dt )
+
+    def draw( self ):
+        self.scenes[ self.enabled_scene ].draw()
+
+    def enter( self ):
+        self.scenes[ self.enabled_scene ].enter()
+
+    def quit( self ):
+        self.scenes[ self.enabled_scene ].quit()
+
+
 class Layer(object):
     def __init__(self):
         self.objects = []
@@ -103,11 +143,7 @@ class Layer(object):
     def draw(self):
         if self.visible:
             for i in self.objects:
-                visible = True
-                if hasattr(i,'visible'):
-                    visible = i.visible
-                if visible:
-                    i.draw()
+                i.draw()
 
     def append( self, o ):
         self.objects.append( o )
