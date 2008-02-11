@@ -1,9 +1,13 @@
 #
+#
 # Scene class for pyglet
 # based on Scene class from pygext
 #
+#
 
 from pyglet import window
+
+__all__ = [ 'Scene' ]
 
 class Scene(object):
     
@@ -21,16 +25,6 @@ class Scene(object):
     ##  Subclass Methods  ##
     ########################
 
-    def init(self):
-        """This method is called when the scene is created. Override in a subclass."""
-        pass ## override in subclass
-
-    def tick(self):
-        pass ## override in subclass
-
-    def realtick(self):
-        pass ## override in subclass
-
     def enter(self, *arg, **kw):
         """This method is called when the scene is activated. Override in a subclass."""
         pass ## override in subclass
@@ -39,13 +33,14 @@ class Scene(object):
         """This method is called when the scene ends. Override in a subclass."""
         pass ## override in subclass
 
+    def tick(self, dt):
+        """ This method is called once per cycle. dt is "delta time" from the last tick."""
+        pass  ## override in subclass
 
     def draw(self):
         for d,l in self.layers.itervalues():
             l.draw()
 
-    def dispatch_events(self):
-        pass
 
     #####################
     ##  Layer Methods  ##
@@ -122,6 +117,10 @@ class Layer(object):
 
     def set_visible( self, flag=True):
         self.visible = flag
+
+    def clear( self ):
+        """ sort of clean-up method """
+        pass
 
     def __getitem__(self, index):
         return self.objects[ index ]

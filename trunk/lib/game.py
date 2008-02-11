@@ -9,6 +9,20 @@ from menu import Menu
 from scene import Scene
 from director import *
 
+class StartGame( Scene ):
+    def __init__( self ):
+        super( StartGame, self ).__init__( self )
+        
+    def enter( self ):
+        print "StartGame: enter()"
+
+    def quit( self ):
+        print "StartGame: quit()"
+
+    def draw( self ):
+        print "StartGame: draw()"
+
+
 class GameMenu(Menu):
     def __init__( self ):
         super( GameMenu, self ).__init__( self, title="GROSSINI'S SISTERS",
@@ -21,6 +35,7 @@ class GameMenu(Menu):
     # Callbacks
     def on_new_game( self ):
         print "ON NEW GAME"
+        director.set_scene( StartGame() )
 
     def on_scores( self ):
         print "ON SCORES"
@@ -41,20 +56,82 @@ class AnimatedSprite( Scene ):
 
         self.background_sound= media.load('data/the great gianna sisters.mp3', streaming=True)
 
+        self.heading = 0
+
     def enter( self ):
+        print "AnimatedSprite: enter()"
         self.background_sound.play()
 
-    def leave( self ):
-        pass
+    def exit( self ):
+        print "AnimatedSprite: exit()"
+        del self.background_sound
 
     def draw( self ):
-        self.sprite_sister1.blit( 120, 280 )
+#        print "AnimatedSprite: draw()"
+        glPushMatrix()
+        glLoadIdentity()
+        glTranslatef(120, 280, 0)
+        glRotatef(self.heading, 0, 0, 1)
+        self.sprite_sister1.blit( -20, -50 )
+
+        glLoadIdentity()
         self.sprite_sister2.blit( 420, 280 )
+        glPopMatrix()
+
+
+    def tick( self, dt ):
+        self.heading += 1.5
+
+class OpenGLTest( Scene ):
+    def __init__( self ):
+        super( OpenGLTest, self).__init__( self )
+        glShadeModel(GL_SMOOTH)
+        glClearColor(0.0, 0.0, 0.0, 0.0)
+        glClearDepth(1.0)
+        glEnable(GL_DEPTH_TEST)
+        glDepthFunc(GL_LEQUAL)
+        glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
+
+        self.rquad = 0.0
+
+    def enter( self ):
+        print "OpenGLText: enter()"
+        glShadeModel(GL_SMOOTH)
+        glClearColor(0.0, 0.0, 0.0, 0.0)
+        glClearDepth(1.0)
+        glEnable(GL_DEPTH_TEST)
+        glDepthFunc(GL_LEQUAL)
+        glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
+
+    def exit( self ):
+        print "OpenGLText: exit()"
+
+    def draw( self ):
+
+        glPushMatrix()
+        glLoadIdentity()
+
+        glTranslatef(100,100,0)
+
+        glRotatef(self.rquad, 0.0, 0.0, 1.0)
+
+#        glColor3f(0.5, 0.5, 1.0)
+        glBegin(GL_QUADS)
+        glVertex3f(-20.0, 20.0, 0)
+        glVertex3f(20.0, 20.0, 0)
+        glVertex3f(20.0, -20.0, 0)
+        glVertex3f(-20.0, -20.0, 0)
+        glEnd()
+        glPopMatrix()
+
+    def tick( self, dt ):
+        self.rquad += dt * 40
 
 
 def run():
     director.init( caption = "Grossini's Sisters" )
-    director.run( ( AnimatedSprite(), GameMenu() ) )
+    director.run( ( OpenGLTest(), AnimatedSprite(), GameMenu() ) )
+
 
 
 if __name__ == "__main__":

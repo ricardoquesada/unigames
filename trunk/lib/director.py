@@ -1,5 +1,7 @@
 #
-# director
+#
+# director class
+# heavily based on pygext director class
 # 
 #
 
@@ -8,6 +10,8 @@ from pyglet.gl import *
 from pyglet import window
 from pyglet import clock
 from pyglet import media
+
+import gc
 
 from scene import Scene
 
@@ -28,11 +32,13 @@ class Director( object ):
 
     def __init__(self, *args, **kw ):
 #        kw['resizable'] = True
-        print '*********** FUCK ************'
         super( Director, self ).__init__( *args, **kw )
 
         # just for the sake of information
         self.instance = "Instance at %d" % self.__hash__()
+
+        self.scene = None
+        self.next_scene = None
 
     def init( self, *args, **kw ):
         self.window = window.Window( *args, **kw )
@@ -47,37 +53,80 @@ class Director( object ):
         self.window.pop_handlers()
 
 
-    def run( self, scenes ):
+    def run( self, scene ):
         """ director main loop """
 
         fps_display = clock.ClockDisplay()
 
-        if isinstance( scenes, Scene ):
-            scenes = ( scenes )
-        for s in scenes:
+        if isinstance( scene, Scene ):
+            self.scene = ( scene, )
+        else:
+            self.scene = scene
+
+        # scenes will be shown
+        for s in self.scene:
             s.enter()
 
         while not self.window.has_exit:
+
+            if self.next_scene is not None:
+                s,a,kw = self.next_scene
+                self._set_scene(s, *a, **kw)
+
             dt = clock.tick()
 
             self.window.dispatch_events()
             media.dispatch_events()
 
-            for s in scenes:
-                s.dispatch_events()
+            for s in self.scene:
+                s.tick( dt )
 
             self.window.clear()
 
             # Draws
-            for s in scenes:
+            for s in self.scene:
                 s.draw()
 
             fps_display.draw()      # FPS
 
             self.window.flip()
 
-        for s in scenes:
-            s.leave()
+
+        for s in self.scene:
+            s.exit()
+
+
+    def set_scene( self, scene, *args, **kw ):
+        self.next_scene = (scene, args, kw)
+
+    def _set_scene(self, scene, *arg, **kw):
+        """Change to a new scene.
+        """
+
+        self.next_scene = None
+        gc.collect()
+        if gc.garbage:
+            print "WARNING: your application produced %i items of garbage" % len(gc.garbage)
+            print gc.garbage[:25]
+
+        if self.scene is not None:
+            for s in self.scene:
+                s.exit()
+
+            for s in self.scene:
+                for name,layer in s.layers.items():
+                    layer[1].clear()
+                    s.del_layer(name)
+
+        gc.collect()
+
+        if isinstance( scene, Scene ):
+            self.scene = ( scene, )
+        else:
+            self.scene = scene
+
+        for s in self.scene:
+            s.enter(*arg, **kw)
 
 
 #    def on_resize( self, width, height):

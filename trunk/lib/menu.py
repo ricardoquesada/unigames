@@ -10,6 +10,8 @@ from director import *
 from pyglet import media
 from pyglet import window
 
+__all__ = [ 'Menu' ]
+
 class Menu(Scene):
 
 
@@ -29,11 +31,11 @@ class Menu(Scene):
 
         self.selected_option = 0
 
-        self.init()
-
         self.title = kwargs['title']
         self.options = [ item[0] for item in kwargs['options'] ]    #  map( lambda x: x[0], kwargs['options'] )
         self.options_cb = [ item[1] for item in kwargs['options'] ]    #  map( lambda x: x[1], kwargs['options'] )
+
+        self.init_menu()
 
         title_layer= self.new_layer("title")
         options_layer = self.new_layer("options")
@@ -84,10 +86,10 @@ class Menu(Scene):
             # 
 
     #
-    # Should be overrided to specify a custom menu
-    # fonts, font size and other attributes should be setted here
+    # Should be overrided in subclass to specify a custom fonts, 
+    # font size, etc.
     #
-    def init( self ):
+    def init_menu( self ):
         pass
 
     #
@@ -105,7 +107,7 @@ class Menu(Scene):
     #
     # Called when the menu will disappear
     #
-    def leave( self ):
+    def exit( self ):
         director.pop_handlers()
 
     #
@@ -136,3 +138,21 @@ class Menu(Scene):
         elif symbol == window.key.ENTER:
             print self.selected_option
             self.options_cb[ self.selected_option]()
+
+
+class MenuItem( object ):
+
+    def __init__(self, label, activate_func):
+        self.y = 0
+        self.label = lael
+        self.activate_func = activate_func
+
+    def draw(self, selected):
+        self.text.draw()
+
+
+    def on_key_press(self, symbol, modifiers):
+        if symbol == key.ENTER and self.activate_func:
+            self.activate_func()
+            if enable_sound:
+                bullet_sound.play()
