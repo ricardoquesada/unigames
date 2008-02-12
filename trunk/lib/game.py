@@ -14,20 +14,6 @@ from menu import Menu, MenuItem, ToggleMenuItem
 from scene import Scene, MultiplexScene 
 from director import *
 
-class StartGame( Scene ):
-    def __init__( self ):
-        super( StartGame, self ).__init__( self )
-        
-    def enter( self ):
-        print "StartGame: enter()"
-
-    def quit( self ):
-        print "StartGame: quit()"
-
-    def draw( self ):
-        print "StartGame: draw()"
-
-
 class MainMenu(Menu):
     def __init__( self ):
         super( MainMenu, self ).__init__("GROSSINI'S SISTERS" )
@@ -50,7 +36,6 @@ class MainMenu(Menu):
         self.switch_to( 1 )
 
     def on_quit( self ):
-        print 'xxxxxxxxxxxxx 1'
         sys.exit()
 
 class OptionMenu(Menu):
@@ -73,7 +58,6 @@ class OptionMenu(Menu):
         print "on_sound: %s" % value
 
     def on_quit( self ):
-        print 'xxxxxxxxxxxxx 0'
         self.switch_to( 0 )
 
     def on_show_fps( self, value ):
@@ -84,20 +68,18 @@ class AnimatedSprite( Scene ):
         super( AnimatedSprite, self).__init__( self )
         self.sprite_sister1 = image.load('data/grossinis_sister1.png')
         self.sprite_sister2 = image.load('data/grossinis_sister2.png')
-        glEnable(GL_BLEND)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
         self.background_sound= media.load('data/the great gianna sisters.mp3', streaming=True)
+        self.player = media.Player()
+        self.player.queue( self.background_sound )
 
         self.heading = 0
 
     def enter( self ):
-        print "AnimatedSprite: enter()"
-        self.background_sound.play()
+        self.player.play()
 
     def exit( self ):
-        print "AnimatedSprite: exit()"
-        del self.background_sound
+        self.player.pause()
 
     def draw( self ):
 #        print "AnimatedSprite: draw()"
@@ -113,6 +95,8 @@ class AnimatedSprite( Scene ):
         self.sprite_sister2.blit( -20, -50 )
         glPopMatrix()
 
+    def dispatch_events( self ):
+        self.player.dispatch_events()
 
     def tick( self, dt ):
         self.heading += 1.5
@@ -120,26 +104,13 @@ class AnimatedSprite( Scene ):
 class OpenGLTest( Scene ):
     def __init__( self ):
         super( OpenGLTest, self).__init__( self )
-        glShadeModel(GL_SMOOTH)
-        glClearColor(0.0, 0.0, 0.0, 0.0)
-        glClearDepth(1.0)
-        glEnable(GL_DEPTH_TEST)
-        glDepthFunc(GL_LEQUAL)
-        glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
-
         self.rquad = 0.0
 
     def enter( self ):
-        print "OpenGLText: enter()"
-        glShadeModel(GL_SMOOTH)
-        glClearColor(0.0, 0.0, 0.0, 0.0)
-        glClearDepth(1.0)
-        glEnable(GL_DEPTH_TEST)
-        glDepthFunc(GL_LEQUAL)
-        glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST)
+        pass
 
     def exit( self ):
-        print "OpenGLText: exit()"
+        pass
 
     def draw( self ):
 
@@ -150,17 +121,30 @@ class OpenGLTest( Scene ):
 
         glRotatef(self.rquad, 0.0, 0.0, 1.0)
 
-#        glColor3f(0.5, 0.5, 1.0)
+        glPushAttrib( GL_CURRENT_BIT )
         glBegin(GL_QUADS)
+        glColor3f(0.5, 0.5, 1.0)
         glVertex3f(-20.0, 20.0, 0)
+        glColor3f(0.5, 1.0, 0.5)
         glVertex3f(20.0, 20.0, 0)
+        glColor3f(1.0, 0.5, 0.5)
         glVertex3f(20.0, -20.0, 0)
+        glColor3f(0.5, 0.5, 0.5)
         glVertex3f(-20.0, -20.0, 0)
         glEnd()
+
+        glPopAttrib()
+
         glPopMatrix()
 
     def tick( self, dt ):
         self.rquad += dt * 40
+
+
+class StartGame( OpenGLTest ):
+    def tick( self, dt ):
+        self.rquad -= dt * 100 
+
 
 
 def run():

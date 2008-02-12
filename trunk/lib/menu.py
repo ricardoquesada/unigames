@@ -1,6 +1,13 @@
 #
+#
 # Menu class for pyglet
-# Ideas borrowed from: pygext, pyglet astraea, Grossini's Hell
+# riq - 2008
+#
+# Ideas borrowed from:
+#    pygext: http://opioid-interactive.com/~shang/projects/pygext/
+#    pyglet astraea: http://www.pyglet.org
+#    Grossini's Hell: http://www.pyweek.org/e/Pywiii/ 
+# 
 #
 
 from pyglet import font
@@ -17,6 +24,17 @@ __all__ = [ 'Menu', 'MenuItem', 'ToggleMenuItem' ]
 #
 # Class Menu
 #
+
+# Horizontal Align
+CENTER = font.Text.CENTER
+LEFT = font.Text.LEFT
+RIGHT = font.Text.RIGHT
+
+# Vertial Align
+TOP = font.Text.TOP
+BOTTOM = font.Text.BOTTOM
+
+
 
 class Menu(Scene):
 
@@ -41,6 +59,9 @@ class Menu(Scene):
         self.font_options_selected_size = 64 
 
         self.sound = media.load('data/menuchange.wav', streaming=False)
+
+        self.menu_halign = CENTER
+        self.menu_valign = CENTER
      
     def draw_title( self ):
         """ draws the title """
@@ -64,21 +85,30 @@ class Menu(Scene):
         fo_selected = font.load( self.font_options, self.font_options_selected_size )
         fo_height = int( (fo.ascent - fo.descent) * 0.9 )
 
+        if self.menu_halign == CENTER:
+            pos_x = win.width / 2
+        elif self.menu_halign == RIGHT:
+            pos_x = win.width - 2
+        elif self.menu_halign == LEFT:
+            pos_x = 2
+        else:
+            raise Exception("Invalid halign value for menu")
+
         for idx,item in enumerate( self.items ):
 
             # Unselected option
             item.text = font.Text( fo, item.label,
-                x=win.width / 2,
+                x=pos_x,
                 y=win.height / 2 + (fo_height * len(self.items) )/2 - (idx * fo_height ) ,
-                halign=font.Text.CENTER,
+                halign=self.menu_halign,
                 valign=font.Text.CENTER)
             item.text.color = ( 0.6, 0.6, 0.6, 1.0 )
 
             # Selected option
             item.text_selected = font.Text( fo_selected, item.label,
-                x=win.width / 2,
+                x=pos_x,
                 y=win.height / 2 + (fo_height * len(self.items) )/2 - (idx * fo_height ) ,
-                halign=font.Text.CENTER,
+                halign=self.menu_halign,
                 valign=font.Text.CENTER)
             item.text_selected.color = ( 1.0, 1.0, 1.0, 1.0 )
 
@@ -112,16 +142,18 @@ class Menu(Scene):
     # Called when the menu will appear
     #
     def enter( self ):
-        director.push_handlers( self.on_key_press )
+#        director.get_window().push_handlers( self.on_key_press, self.on_mouse_motion )
+        director.get_window().push_handlers( self.on_key_press )
 
     #
     # Called when the menu will disappear
     #
     def exit( self ):
-        director.pop_handlers()
+        director.get_window().pop_handlers()
 
     #
     # Called everytime a key is pressed
+    # return True to avoid passing the event to another handler
     #
     def on_key_press(self, symbol, modifiers):
 
@@ -133,8 +165,9 @@ class Menu(Scene):
             self.selected_index -= 1
         elif symbol == key.ESCAPE:
             self.on_quit()
+            return True
         else:
-            self.items[self.selected_index].on_key_press(symbol, modifiers)
+            ret = self.items[self.selected_index].on_key_press(symbol, modifiers)
 
         if self.selected_index< 0:
             self.selected_index= len( self.items ) -1
@@ -145,7 +178,13 @@ class Menu(Scene):
             self.items[ old_idx ].selected = False
             self.items[ self.selected_index ].selected = True 
             self.sound.play()
+            return True
 
+        return ret
+
+    def on_mouse_motion( self, x, y, dx, dy ):
+        pass
+            
 
     #
     # Called everytime you press escape
@@ -180,6 +219,7 @@ class MenuItem( object ):
     def on_key_press(self, symbol, modifiers):
         if symbol == key.ENTER and self.activate_func:
             self.activate_func()
+            return True
 
 #
 # Item that can be toggled
@@ -192,9 +232,12 @@ class ToggleMenuItem( MenuItem ):
         self.toggle_func = toggle_func
         super(ToggleMenuItem, self).__init__( self.get_label(), None )
 
-
     def get_label(self):
         return self.toggle_label + (self.value and ': ON' or ': OFF')
+
+    def tick( self, dt ):
+        # useful to animate the items
+        pass
 
     def on_key_press(self, symbol, modifiers):
         if symbol in ( key.LEFT, key.RIGHT, key.ENTER):
@@ -202,3 +245,4 @@ class ToggleMenuItem( MenuItem ):
             self.text.text = self.get_label()
             self.text_selected.text = self.get_label()
             self.toggle_func( self.value )
+            return True

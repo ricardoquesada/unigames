@@ -1,8 +1,11 @@
-# $Id$
+#
 #
 # Scene class for pyglet
-# based on Scene class from pygext and other projects
+# riq - 2008
 #
+# Ideas borrowed from:
+#    pygext: http://opioid-interactive.com/~shang/projects/pygext/
+# 
 #
 
 from pyglet import window
@@ -34,7 +37,6 @@ class Scene(object):
         """ This method is called once per cycle. dt is "delta time" from the last tick."""
         pass  ## override in subclass
 
-
     def draw(self):
         """ This method is called once per cycle. Subclasses shall draw everything.
         Don't override this method if you want to work with layers
@@ -42,6 +44,11 @@ class Scene(object):
         for d,l in self.layers.itervalues():
             l.draw()
 
+    def dispatch_events( self ):
+        """ This method is called once per cycle. subclasses should override it
+        if the want to clean-up some events, like music
+        """
+        pass  ## override
 
     #####################
     ##  Layer Methods  ##

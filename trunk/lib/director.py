@@ -1,10 +1,12 @@
 #
 #
-# director class
-# heavily based on pygext director class
+# Director class for pyglet
+# riq - 2008
+#
+# Ideas borrowed from:
+#    pygext: http://opioid-interactive.com/~shang/projects/pygext/
 # 
 #
-
 
 from pyglet.gl import *
 from pyglet import window
@@ -31,7 +33,6 @@ class Director( object ):
     """
 
     def __init__(self, *args, **kw ):
-#        kw['resizable'] = True
         super( Director, self ).__init__( *args, **kw )
 
         # just for the sake of information
@@ -51,18 +52,32 @@ class Director( object ):
         self.__window_original_res_y = self.__window.height
         self.__window_aspect =  self.__window.width / float( self.__window.height )
 
+        self.enable_alpha_blending()
+
+    #
+    # enable alpha blending
+    # images with "alpha" channel will be shown according to that value
+    #
+    def enable_alpha_blending( self ):
+        glEnable(GL_BLEND)
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+
+    #
+    # return the pyglet Window
+    #
     def get_window( self ):
         return self.__window
 
-    def push_handlers( self, h ):    
-        self.__window.push_handlers( h )
-
-    def pop_handlers( self ):
-        self.__window.pop_handlers()
-
+    #
+    # show FPS in left bottom corner
+    #
     def enable_FPS( self, value ):
         self.show_FPS = value
 
+    #
+    # director main loop
+    # scene is 1 scene or a list of scenes
+    #
     def run( self, scene ):
         """ director main loop """
 
@@ -90,6 +105,7 @@ class Director( object ):
 
             for s in self.scene:
                 s.tick( dt )
+                s.dispatch_events()
 
             self.__window.clear()
 
@@ -106,6 +122,9 @@ class Director( object ):
             s.exit()
 
 
+    #
+    # to change to a new scene or list of scenes
+    #
     def set_scene( self, scene, *args, **kw ):
         self.next_scene = (scene, args, kw)
 
@@ -139,16 +158,9 @@ class Director( object ):
             s.enter(*arg, **kw)
 
 
-#    def on_resize( self, width, height):
-#        if height==0:
-#            height=1
-#        glViewport(0, 0, width, height)
-#        glMatrixMode(GL_PROJECTION)
-#        glLoadIdentity()
-#        gluPerspective(45, 1.0*width/height, 0.1, 100.0)
-#        glMatrixMode(GL_MODELVIEW)
-#        glLoadIdentity()
-
+    #
+    # window resize handler
+    #
     def on_resize( self, width, height):
         width_aspect = width
         height_aspect = int( width / self.__window_aspect)
