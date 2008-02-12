@@ -1,3 +1,6 @@
+#
+# A playground file to test the framework
+#
 __docformat__ = 'restructuredtext'
 __version__ = '$Id$'
 
@@ -8,7 +11,7 @@ from pyglet.gl import *
 from pyglet import media
 
 from menu import Menu, MenuItem, ToggleMenuItem
-from scene import Scene, XorScene 
+from scene import Scene, MultiplexScene 
 from director import *
 
 class StartGame( Scene ):
@@ -59,9 +62,12 @@ class OptionMenu(Menu):
         self.items.append( MenuItem('OK', self.on_quit) )
         self.reset()
 
+        self.fullscreen = False
+
     # Callbacks
     def on_fullscreen( self ):
-        pass
+        self.fullscreen = not self.fullscreen
+        director.get_window().set_fullscreen( self.fullscreen )
 
     def on_sound( self, value ):
         print "on_sound: %s" % value
@@ -102,7 +108,9 @@ class AnimatedSprite( Scene ):
         self.sprite_sister1.blit( -20, -50 )
 
         glLoadIdentity()
-        self.sprite_sister2.blit( 420, 280 )
+        glTranslatef(420, 280, 0)
+        glRotatef(-self.heading, 0, 0, 1)
+        self.sprite_sister2.blit( -20, -50 )
         glPopMatrix()
 
 
@@ -138,7 +146,7 @@ class OpenGLTest( Scene ):
         glPushMatrix()
         glLoadIdentity()
 
-        glTranslatef(100,100,0)
+        glTranslatef(320,100,0)
 
         glRotatef(self.rquad, 0.0, 0.0, 1.0)
 
@@ -161,10 +169,10 @@ def run():
 
     font.add_directory('data')
 
-    director.init( caption = "Grossini's Sisters" )
+    director.init( caption = "Grossini's Sisters", resizable = True )
     director.run( ( OpenGLTest(),
                     AnimatedSprite(),
-                    XorScene(
+                    MultiplexScene(
                         ( MainMenu(), OptionMenu() )
                         ) ) )
 

@@ -1,14 +1,14 @@
-#
+# $Id$
 #
 # Scene class for pyglet
-# based on Scene class from pygext
+# based on Scene class from pygext and other projects
 #
 #
 
 from pyglet import window
 from pyglet import event
 
-__all__ = [ 'Scene' ]
+__all__ = [ 'Scene', 'MultiplexScene', 'Layer' ]
 
 class Scene(object):
     
@@ -96,16 +96,15 @@ class Scene(object):
 
 
 #
-# XorScene
-# Exclusive-Or Scene.
-# An Exclusive-Or Scene is a Composite scene that only enables one scene at the time
-# This is useful, when you have 3 or 4 menus, but you want to show one at the
-# time
+# MultiplexScene
+# 
+# A Composite scene that only enables one scene at the time
+# This is useful, for example, when you have 3 or 4 menus, but you want to
+# show one at the time
 #
-
-class XorScene( Scene ):
+class MultiplexScene( Scene ):
     def __init__( self, scenes ):
-        super( XorScene, self ).__init__()
+        super( MultiplexScene, self ).__init__()
 
         self.scenes = scenes
         self.enabled_scene = 0
@@ -115,7 +114,7 @@ class XorScene( Scene ):
 
     def switch_to( self, scene_number ):
         if scene_number < 0 or scene_number >= len( self.scenes ):
-            raise Exception("XorScene: Invalid scene number")
+            raise Exception("MultiplexScene: Invalid scene number")
 
         self.scenes[ self.enabled_scene ].exit()
         self.enabled_scene = scene_number

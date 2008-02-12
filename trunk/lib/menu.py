@@ -54,7 +54,7 @@ class Menu(Scene):
             y=win.height - 40,
             halign=font.Text.CENTER,
             valign=font.Text.CENTER)
-        text.color = ( 1.0, 1.0, 1.0, 0.5 )
+        text.color = ( 0.6, 0.6, 0.6, 1.0 )
 
         self.title_text = text
 
@@ -72,7 +72,7 @@ class Menu(Scene):
                 y=win.height / 2 + (fo_height * len(self.items) )/2 - (idx * fo_height ) ,
                 halign=font.Text.CENTER,
                 valign=font.Text.CENTER)
-            item.text.color = ( 0.6, 0.6, 0.6, 0.6 )
+            item.text.color = ( 0.6, 0.6, 0.6, 1.0 )
 
             # Selected option
             item.text_selected = font.Text( fo_selected, item.label,

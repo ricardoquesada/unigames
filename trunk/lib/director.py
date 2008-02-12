@@ -42,16 +42,23 @@ class Director( object ):
         self.show_FPS = True
 
     def init( self, *args, **kw ):
-        self.window = window.Window( *args, **kw )
+        # create main window
+        self.__window = window.Window( *args, **kw )
+
+        # save resolution and aspect for resize / fullscreen
+        self.__window.on_resize = self.on_resize
+        self.__window_original_res_x = self.__window.width
+        self.__window_original_res_y = self.__window.height
+        self.__window_aspect =  self.__window.width / float( self.__window.height )
 
     def get_window( self ):
-        return self.window
+        return self.__window
 
     def push_handlers( self, h ):    
-        self.window.push_handlers( h )
+        self.__window.push_handlers( h )
 
     def pop_handlers( self ):
-        self.window.pop_handlers()
+        self.__window.pop_handlers()
 
     def enable_FPS( self, value ):
         self.show_FPS = value
@@ -70,7 +77,7 @@ class Director( object ):
         for s in self.scene:
             s.enter()
 
-        while not self.window.has_exit:
+        while not self.__window.has_exit:
 
             if self.next_scene is not None:
                 s,a,kw = self.next_scene
@@ -78,13 +85,13 @@ class Director( object ):
 
             dt = clock.tick()
 
-            self.window.dispatch_events()
+            self.__window.dispatch_events()
             media.dispatch_events()
 
             for s in self.scene:
                 s.tick( dt )
 
-            self.window.clear()
+            self.__window.clear()
 
             # Draws
             for s in self.scene:
@@ -93,7 +100,7 @@ class Director( object ):
             if self.show_FPS:
                 fps_display.draw()      # FPS
 
-            self.window.flip()
+            self.__window.flip()
 
         for s in self.scene:
             s.exit()
@@ -142,6 +149,22 @@ class Director( object ):
 #        glMatrixMode(GL_MODELVIEW)
 #        glLoadIdentity()
 
+    def on_resize( self, width, height):
+        width_aspect = width
+        height_aspect = int( width / self.__window_aspect)
+
+        if height_aspect > height:
+            width_aspect = int( height * self.__window_aspect )
+            height_aspect = height
+
+        center_x = (width - width_aspect) / 2
+        center_y =  (height - height_aspect) / 2
+
+        glViewport(center_x, center_y, width_aspect, height_aspect )
+        glMatrixMode(gl.GL_PROJECTION)
+        glLoadIdentity()
+        glOrtho(0, self.__window_original_res_x, 0, self.__window_original_res_y, -1, 1)
+        glMatrixMode(gl.GL_MODELVIEW)
 
 
 director = Director()
