@@ -11,26 +11,35 @@ from pyglet.gl import *
 from pyglet import media
 from pyglet import font
 
+import menu
 from menu import Menu, MenuItem, ToggleMenuItem
 from scene import Scene, MultiplexScene 
 from director import *
 
 class MainMenu(Menu):
     def __init__( self ):
+
+        # call superclass with the title
         super( MainMenu, self ).__init__("GROSSINI'S SISTERS" )
 
-        #
-        # custom initialization           
-        #
+        # you can override the font that will be used for the title and the items
         self.font_title = 'KonQa Black'
         self.font_items = 'You Are Loved'
 
-        self.items.append( MenuItem('New Game', self.on_new_game ) )
-        self.items.append( MenuItem('Options', self.on_options ) )
-        self.items.append( MenuItem('Scores', self.on_scores ) )
-        self.items.append( MenuItem('Quit', self.on_quit ) )
+        # you can also override the font size and the colors. see menu.py for
+        # more info
 
-        self.reset()
+        # example: menus can be vertical aligned and horizontal aligned
+        self.menu_valign = menu.CENTER
+        self.menu_halign = menu.CENTER
+
+        self.add_item( MenuItem('New Game', self.on_new_game ) )
+        self.add_item( MenuItem('Options', self.on_options ) )
+        self.add_item( MenuItem('Scores', self.on_scores ) )
+        self.add_item( MenuItem('Quit', self.on_quit ) )
+
+        # after adding all the items just call build_items()
+        self.build_items()
 
 
     # Callbacks
@@ -50,15 +59,17 @@ class ScoresScene( Scene ):
     def __init__( self ):
         super( Scene, self).__init__()
 
-        win = director.get_window()
+        # to obtain the window_size, call this function since
+        # this function returns a "converted" value that reflects the "reality"
+        x,y = director.get_window_size()
 
-        ft = font.load( '', 64 )
+        ft = font.load( '', 48 )
         self.text = font.Text( ft, 'Scores Not Implemented Yet',
-            x=win.width,
-            y=win.height / 2,
+            x=x,
+            y=y / 2,
             halign=font.Text.RIGHT,
             valign=font.Text.CENTER)
-        self.text.color = (1.0, 0.0, 0.0, 1.0 )
+        self.text.color = (1.0, 0.0, 1.0, 0.5 )
 
         self.increment = -5
     
@@ -73,10 +84,12 @@ class ScoresScene( Scene ):
         return True
 
     def tick( self, dt ):
+        x,y = director.get_window_size()
+
         self.text.x += self.increment
         if self.text.x < 0:
             self.increment = - self.increment
-        elif self.text.x > director.get_window().width:
+        elif self.text.x > x:
             self.increment = - self.increment
             
 
@@ -91,10 +104,10 @@ class OptionMenu(Menu):
         self.font_title = 'KonQa Black'
         self.font_items = 'You Are Loved'
 
-        self.items.append( MenuItem('Fullscreen', self.on_fullscreen) )
-        self.items.append( ToggleMenuItem('Show FPS', True, self.on_show_fps) )
-        self.items.append( MenuItem('OK', self.on_quit) )
-        self.reset()
+        self.add_item( MenuItem('Fullscreen', self.on_fullscreen) )
+        self.add_item( ToggleMenuItem('Show FPS', True, self.on_show_fps) )
+        self.add_item( MenuItem('OK', self.on_quit) )
+        self.build_items()
 
         self.fullscreen = False
 

@@ -55,12 +55,15 @@ class Menu(Scene):
 
         # Title
         self.font_title = ''            # Full font name
-        self.font_title_size = 48
+        self.font_title_size = 72
+        self.font_title_color = ( 0.6, 0.6, 0.6, 1.0 )
 
         # Items
         self.font_items = ''            # Full font name
         self.font_items_size = 48
+        self.font_items_color = (0.6, 0.6, 0.6, 1.0 ) 
         self.font_items_selected_size = 64 
+        self.font_items_selected_color = (1.0, 1.0, 1.0, 1.0 )
 
         # Sound
         self.sound = media.load('data/menuchange.wav', streaming=False)
@@ -71,30 +74,33 @@ class Menu(Scene):
      
     def _draw_title( self ):
         """ draws the title """
-        win = director.get_window()
+        width, height = director.get_window_size()
+
         ft = font.load( self.font_title, self.font_title_size )
         ft_height = ft.ascent - ft.descent
         text = font.Text(ft, self.title)
 
         text = font.Text(ft, self.title,
-            x=win.width / 2,
-            y=win.height - 40,
+            x=width / 2,
+            y=height - 40,
             halign=font.Text.CENTER,
             valign=font.Text.CENTER)
-        text.color = ( 0.6, 0.6, 0.6, 1.0 )
+        text.color = self.font_title_color
 
         self.title_text = text
 
     def _draw_items( self ):
-        win = director.get_window()
+
+        width, height = director.get_window_size()
+
         fo = font.load( self.font_items, self.font_items_size )
         fo_selected = font.load( self.font_items, self.font_items_selected_size )
         fo_height = int( (fo.ascent - fo.descent) * 0.9 )
 
         if self.menu_halign == CENTER:
-            pos_x = win.width / 2
+            pos_x = width / 2
         elif self.menu_halign == RIGHT:
-            pos_x = win.width - 2
+            pos_x = width - 2
         elif self.menu_halign == LEFT:
             pos_x = 2
         else:
@@ -102,26 +108,25 @@ class Menu(Scene):
 
         for idx,item in enumerate( self.items ):
 
-            # Unselected option
-            item.text = font.Text( fo, item.label,
-                x=pos_x,
-                y=win.height / 2 + (fo_height * len(self.items) )/2 - (idx * fo_height ) ,
-                halign=self.menu_halign,
-                valign=font.Text.CENTER)
-            item.text.color = ( 0.6, 0.6, 0.6, 1.0 )
+            if self.menu_valign == CENTER:
+                pos_y = height / 2 + (fo_height * len(self.items) )/2 - (idx * fo_height )
+            elif self.menu_valign == TOP:
+                pos_y = height - (idx * fo_height )
+            elif self.menu_valign == BOTTOM:
+                pos_y = 0 + fo_height * len(self.items) - (idx * fo_height )
 
-            # Selected option
-            item.text_selected = font.Text( fo_selected, item.label,
-                x=pos_x,
-                y=win.height / 2 + (fo_height * len(self.items) )/2 - (idx * fo_height ) ,
-                halign=self.menu_halign,
-                valign=font.Text.CENTER)
-            item.text_selected.color = ( 1.0, 1.0, 1.0, 1.0 )
+            item.init_font( fo, fo_selected, pos_x, pos_y )
+
 
     def add_item( self, item ):
         """add_item( menu_item ) -> None
 
-        Adds an item to the menu. """
+        Adds an item to the menu. The order of the list important since the
+        one will be shonw first."""
+        item.halign = self.menu_halign
+        item.valign = self.menu_valign
+        item.color = self.font_items_color
+        item.selected_color = self.font_items_selected_color
         self.items.append( item )
 
     # overriden method from Scene
@@ -134,8 +139,8 @@ class Menu(Scene):
         for i in self.items:
             i.tick( dt )
 
-    def reset( self ):
-        """reset() -> None
+    def build_items( self ):
+        """build_items() -> None
 
         Initialize the menu with the added menu items.
         Don't call this method before adding all the menu items"""
@@ -211,8 +216,14 @@ class MenuItem( object ):
 
         self.selected = False
 
+        # Variables that will be set when init_font() is called
         self.text = None
         self.text_selected = None
+
+        self.color = None
+        self.selected_color = None
+        self.halign = None
+        self.valign = None
 
     def draw( self ):
         if self.selected:
@@ -227,6 +238,19 @@ class MenuItem( object ):
         if symbol == key.ENTER and self.activate_func:
             self.activate_func()
             return True
+
+    def init_font( self, aFont, aFont_selected, x, y ):
+        """init_font( normal_font, selected_font, x, y) -> None
+
+        Creates pyglet Font objects ready to be drawn when necesary."""
+
+        # Unselected option
+        self.text = font.Text( aFont, self.label, x=x , y=y, halign=self.halign, valign=self.valign )
+        self.text.color = self.color
+
+        # Selected option
+        self.text_selected = font.Text( aFont_selected, self.label, x=x, y=y, halign=self.halign, valign=self.valign )
+        self.text_selected.color = self.selected_color
 
 #
 # Item that can be toggled

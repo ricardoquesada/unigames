@@ -1,15 +1,12 @@
 #
 #
-# Scene class for pyglet
+# Scene class. Could be used in any toolkit. Tested on pyglet
 # riq - 2008
 #
 # Ideas borrowed from:
 #    pygext: http://opioid-interactive.com/~shang/projects/pygext/
 # 
 #
-
-from pyglet import window
-from pyglet import event
 
 __all__ = [ 'Scene', 'MultiplexScene', 'Layer' ]
 
@@ -132,6 +129,12 @@ class MultiplexScene( Scene ):
             s.switch_to = self.switch_to
 
     def switch_to( self, scene_number ):
+        """switch_to( scene_nubmer ) -> None
+
+        Switches to another Scene that belongs to the Multiplexor.
+        scene_number MUST be a number between 0 and the quantities of scenes -1.
+        The running scene will receive an "exit()" call, and the new scene will receive an "enter()" call.
+        """
         if scene_number < 0 or scene_number >= len( self.scenes ):
             raise Exception("MultiplexScene: Invalid scene number")
 

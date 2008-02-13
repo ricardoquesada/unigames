@@ -60,6 +60,15 @@ class Director( object ):
 
         self._enable_alpha_blending()
 
+    def get_window_size( self ):
+        """get_window_size() -> (x,y)
+
+        Returns the original window size, and not the resolution.
+        In Fullscreen mode the resolution is different from the Window mode
+        but the size is emulated.
+        """
+        return ( self.__window_original_res_x, self.__window_original_res_y)
+        
     #
     # enable alpha blending
     # images with "alpha" channel will be shown according to that value
