@@ -69,7 +69,7 @@ class Menu(Scene):
         self.menu_halign = CENTER
         self.menu_valign = CENTER
      
-    def draw_title( self ):
+    def _draw_title( self ):
         """ draws the title """
         win = director.get_window()
         ft = font.load( self.font_title, self.font_title_size )
@@ -85,7 +85,7 @@ class Menu(Scene):
 
         self.title_text = text
 
-    def draw_items( self ):
+    def _draw_items( self ):
         win = director.get_window()
         fo = font.load( self.font_items, self.font_items_size )
         fo_selected = font.load( self.font_items, self.font_items_selected_size )
@@ -119,6 +119,9 @@ class Menu(Scene):
             item.text_selected.color = ( 1.0, 1.0, 1.0, 1.0 )
 
     def add_item( self, item ):
+        """add_item( menu_item ) -> None
+
+        Adds an item to the menu. """
         self.items.append( item )
 
     # overriden method from Scene
@@ -132,17 +135,15 @@ class Menu(Scene):
             i.tick( dt )
 
     def reset( self ):
-        self.draw_title()
-        self.draw_items()
+        """reset() -> None
+
+        Initialize the menu with the added menu items.
+        Don't call this method before adding all the menu items"""
+        self._draw_title()
+        self._draw_items()
         self.selected_index = 0
         self.items[ self.selected_index ].selected = True
 
-    #
-    # Should be overrided in subclass to specify a custom fonts, 
-    # font size, etc.
-    #
-    def init_menu( self ):
-        pass
 
     #
     # Called when the menu will appear
@@ -236,9 +237,9 @@ class ToggleMenuItem( MenuItem ):
         self.toggle_label = label
         self.value = value
         self.toggle_func = toggle_func
-        super(ToggleMenuItem, self).__init__( self.get_label(), None )
+        super(ToggleMenuItem, self).__init__( self._get_label(), None )
 
-    def get_label(self):
+    def _get_label(self):
         return self.toggle_label + (self.value and ': ON' or ': OFF')
 
     def tick( self, dt ):
@@ -248,7 +249,7 @@ class ToggleMenuItem( MenuItem ):
     def on_key_press(self, symbol, modifiers):
         if symbol in ( key.LEFT, key.RIGHT, key.ENTER):
             self.value = not self.value
-            self.text.text = self.get_label()
-            self.text_selected.text = self.get_label()
+            self.text.text = self._get_label()
+            self.text_selected.text = self._get_label()
             self.toggle_func( self.value )
             return True

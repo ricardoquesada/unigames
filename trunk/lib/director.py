@@ -26,7 +26,7 @@ class Director( object ):
     """Scene director
 
     The director is the element that controls the main loop
-    and calls event handlers, updates actions etc. You should
+    and calls event handlers, updates actions, etc. You should
     not create instances of this class manually, as the default
     instance is automatically initialized and other components depend
     on that instance.
@@ -43,7 +43,13 @@ class Director( object ):
         self.show_FPS = True
 
     def init( self, *args, **kw ):
-        # create main window
+        """ init( *args, **kw ) -> None
+
+        initialize pyglets main Window with *args and **kw as parameters.
+        this method shall be called before run()
+        """
+
+        # create main pyglet window
         self.__window = window.Window( *args, **kw )
 
         # save resolution and aspect for resize / fullscreen
@@ -52,13 +58,13 @@ class Director( object ):
         self.__window_original_res_y = self.__window.height
         self.__window_aspect =  self.__window.width / float( self.__window.height )
 
-        self.enable_alpha_blending()
+        self._enable_alpha_blending()
 
     #
     # enable alpha blending
     # images with "alpha" channel will be shown according to that value
     #
-    def enable_alpha_blending( self ):
+    def _enable_alpha_blending( self ):
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
@@ -66,20 +72,34 @@ class Director( object ):
     # return the pyglet Window
     #
     def get_window( self ):
+        """get_window( bool ) -> Window
+
+        returns the pyglet main Window.
+        """
         return self.__window
 
     #
     # show FPS in left bottom corner
     #
     def enable_FPS( self, value ):
+        """enable_FPS( bool ) -> None
+
+        Show FPS at the bottom left or not.
+        """
         self.show_FPS = value
 
     #
     # director main loop
     # scene is 1 scene or a list of scenes
+    # These scenes will be run all together.
+    # If you want to change the scene, just call set_scene()
     #
     def run( self, scene ):
-        """ director main loop """
+        """run( scenes ) -> None
+
+        Executes the list of scenes (or the scene) at the same time.
+        Scenes that are first in the list, will be executed (draw) first.
+        """
 
         fps_display = clock.ClockDisplay()
 
@@ -88,7 +108,7 @@ class Director( object ):
         else:
             self.scene = scene
 
-        # scenes will be shown
+        # scenes initialization before being shown
         for s in self.scene:
             s.enter()
 
@@ -100,27 +120,33 @@ class Director( object ):
 
             dt = clock.tick()
 
+            # dispatch pyglet events
             self.__window.dispatch_events()
             media.dispatch_events()
 
+            # custom scenes: dispatch events, and ticks them
             for s in self.scene:
                 s.tick( dt )
                 s.dispatch_events()
 
+            # clear pyglets main window
             self.__window.clear()
 
-            # Draws
+            # Draws all the elements again
             for s in self.scene:
                 s.draw()
 
+            # show the FPS
             if self.show_FPS:
-                fps_display.draw()      # FPS
+                fps_display.draw()
 
+            # show all the changes
             self.__window.flip()
 
+
+        # scenes clenaup
         for s in self.scene:
             s.exit()
-
 
     #
     # to change to a new scene or list of scenes

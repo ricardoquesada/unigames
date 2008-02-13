@@ -25,27 +25,39 @@ class Scene(object):
     ##  Subclass Methods  ##
     ########################
 
-    def enter(self, *arg, **kw):
-        """This method is called when the scene is activated. Override in a subclass."""
+    def enter(self):
+        """enter() -> None
+        
+        This method is called each time before the scene will be activated / shown. Override in a subclass."""
         pass ## override in subclass
 
     def exit(self):
-        """This method is called when the scene ends. Override in a subclass."""
+        """exit() -> None
+        
+        This method is called each after time the scene is removed. Override in a subclass."""
         pass ## override in subclass
 
     def tick(self, dt):
-        """ This method is called once per cycle. dt is "delta time" from the last tick."""
+        """tick(delta_time) -> None
+        
+        This method is called once per cycle. dt is "delta time" from the last tick.
+        Animations uses this value to calculate speed
+        """
         pass  ## override in subclass
 
     def draw(self):
-        """ This method is called once per cycle. Subclasses shall draw everything.
+        """draw() -> None
+        
+        This method is called once per cycle. Subclasses shall draw everything.
         Don't override this method if you want to work with layers
         """
         for d,l in self.layers.itervalues():
             l.draw()
 
     def dispatch_events( self ):
-        """ This method is called once per cycle. subclasses should override it
+        """ dispatch_event() -> None
+
+        This method is called once per cycle. subclasses should override it
         if the want to clean-up some events, like music
         """
         pass  ## override
