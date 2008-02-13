@@ -50,16 +50,22 @@ class Menu(Scene):
 
         #
         # Menu default options
-        # Custom menus can be overriden changing these variables
+        # Menus can be customized changing these variables
         #
-        self.font_title= 'KonQa Black'
-        self.font_title_size = 72
-        self.font_options = 'You Are Loved'
-        self.font_options_size = 48
-        self.font_options_selected_size = 64 
 
+        # Title
+        self.font_title = ''            # Full font name
+        self.font_title_size = 48
+
+        # Items
+        self.font_items = ''            # Full font name
+        self.font_items_size = 48
+        self.font_items_selected_size = 64 
+
+        # Sound
         self.sound = media.load('data/menuchange.wav', streaming=False)
 
+        # Alignment
         self.menu_halign = CENTER
         self.menu_valign = CENTER
      
@@ -81,8 +87,8 @@ class Menu(Scene):
 
     def draw_items( self ):
         win = director.get_window()
-        fo = font.load( self.font_options, self.font_options_size )
-        fo_selected = font.load( self.font_options, self.font_options_selected_size )
+        fo = font.load( self.font_items, self.font_items_size )
+        fo_selected = font.load( self.font_items, self.font_items_selected_size )
         fo_height = int( (fo.ascent - fo.descent) * 0.9 )
 
         if self.menu_halign == CENTER:

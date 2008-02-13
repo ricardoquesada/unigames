@@ -9,6 +9,7 @@ import sys
 from pyglet import image
 from pyglet.gl import *
 from pyglet import media
+from pyglet import font
 
 from menu import Menu, MenuItem, ToggleMenuItem
 from scene import Scene, MultiplexScene 
@@ -17,20 +18,27 @@ from director import *
 class MainMenu(Menu):
     def __init__( self ):
         super( MainMenu, self ).__init__("GROSSINI'S SISTERS" )
+
+        #
+        # custom initialization           
+        #
+        self.font_title = 'KonQa Black'
+        self.font_items = 'You Are Loved'
+
         self.items.append( MenuItem('New Game', self.on_new_game ) )
         self.items.append( MenuItem('Options', self.on_options ) )
         self.items.append( MenuItem('Scores', self.on_scores ) )
         self.items.append( MenuItem('Quit', self.on_quit ) )
+
         self.reset()
 
 
     # Callbacks
     def on_new_game( self ):
-        print "ON NEW GAME"
         director.set_scene( StartGame() )
 
     def on_scores( self ):
-        print "ON SCORES"
+        self.switch_to( 2 )
 
     def on_options( self ):
         self.switch_to( 1 )
@@ -38,11 +46,52 @@ class MainMenu(Menu):
     def on_quit( self ):
         sys.exit()
 
+class ScoresScene( Scene ):
+    def __init__( self ):
+        super( Scene, self).__init__()
+
+        win = director.get_window()
+
+        ft = font.load( '', 64 )
+        self.text = font.Text( ft, 'Scores Not Implemented Yet',
+            x=win.width,
+            y=win.height / 2,
+            halign=font.Text.RIGHT,
+            valign=font.Text.CENTER)
+        self.text.color = (1.0, 0.0, 0.0, 1.0 )
+
+        self.increment = -5
+    
+    def enter( self ):
+        director.get_window().push_handlers( self.on_key_press )
+
+    def exit( self ):
+        director.get_window().pop_handlers()
+
+    def on_key_press( self, a, b ):
+        self.switch_to( 0 )
+        return True
+
+    def tick( self, dt ):
+        self.text.x += self.increment
+        if self.text.x < 0:
+            self.increment = - self.increment
+        elif self.text.x > director.get_window().width:
+            self.increment = - self.increment
+            
+
+    def draw( self ):
+        self.text.draw()
+        
+
 class OptionMenu(Menu):
     def __init__( self ):
         super( OptionMenu, self ).__init__("GROSSINI'S SISTERS" )
+
+        self.font_title = 'KonQa Black'
+        self.font_items = 'You Are Loved'
+
         self.items.append( MenuItem('Fullscreen', self.on_fullscreen) )
-        self.items.append( ToggleMenuItem('Sound', True, self.on_sound) )
         self.items.append( ToggleMenuItem('Show FPS', True, self.on_show_fps) )
         self.items.append( MenuItem('OK', self.on_quit) )
         self.reset()
@@ -53,9 +102,6 @@ class OptionMenu(Menu):
     def on_fullscreen( self ):
         self.fullscreen = not self.fullscreen
         director.get_window().set_fullscreen( self.fullscreen )
-
-    def on_sound( self, value ):
-        print "on_sound: %s" % value
 
     def on_quit( self ):
         self.switch_to( 0 )
@@ -82,7 +128,6 @@ class AnimatedSprite( Scene ):
         self.player.pause()
 
     def draw( self ):
-#        print "AnimatedSprite: draw()"
         glPushMatrix()
         glLoadIdentity()
         glTranslatef(120, 280, 0)
@@ -153,11 +198,11 @@ def run():
 
     font.add_directory('data')
 
-    director.init( caption = "Grossini's Sisters", resizable = True )
+    director.init( caption = "Grossini's Sisters", resizable = False )
     director.run( ( OpenGLTest(),
                     AnimatedSprite(),
                     MultiplexScene(
-                        ( MainMenu(), OptionMenu() )
+                        ( MainMenu(), OptionMenu(), ScoresScene() )
                         ) ) )
 
 

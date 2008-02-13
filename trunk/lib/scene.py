@@ -136,8 +136,8 @@ class MultiplexScene( Scene ):
     def enter( self ):
         self.scenes[ self.enabled_scene ].enter()
 
-    def quit( self ):
-        self.scenes[ self.enabled_scene ].quit()
+    def exit( self ):
+        self.scenes[ self.enabled_scene ].exit()
 
 
 class Layer(object):
