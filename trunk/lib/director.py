@@ -194,6 +194,25 @@ class Director( object ):
 
 
     #
+    # get virtual coordinates
+    #
+    def get_virtual_coordinates( self, x, y ):
+        """get_virtual_coordinates( x, y ) -> (int, int)
+
+        Converts real coordinates to virtual (or screen) coordinates.
+        If you are working with a window "real" coordinates and "virtual"
+        coordinates are the same, but if you are in fullscreen mode, then
+        the "real" and "virtual" coordinates might be different since fullscreen mode 
+        doesn't change the resolution of the screen. Instead it uses all the screen,
+        so the "real" coordinates are the coordinates of all the screen.
+        """
+
+        x_diff = self.__window_original_res_x / float( self.__window.width )
+        y_diff = self.__window_original_res_y / float( self.__window.height )
+
+        return ( int( x_diff * x), int( y_diff * y ) )
+
+    #
     # window resize handler
     #
     def on_resize( self, width, height):

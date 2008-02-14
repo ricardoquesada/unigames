@@ -154,7 +154,7 @@ class Menu(Scene):
     # Called when the menu will appear
     #
     def enter( self ):
-#        director.get_window().push_handlers( self.on_key_press, self.on_mouse_motion )
+        director.get_window().push_handlers( self.on_key_press, self.on_mouse_motion, self.on_mouse_release )
         director.get_window().push_handlers( self.on_key_press )
 
     #
@@ -194,8 +194,18 @@ class Menu(Scene):
 
         return ret
 
+    def on_mouse_release( self, x, y, buttons, modifiers ):
+        (x,y) = director.get_virtual_coordinates(x,y)
+        if self.items[ self.selected_index ].is_inside_box(x,y):
+            return self.items[ self.selected_index ].on_key_press( key.ENTER, 0 )   # XXX: horrible hack, fixme
+
     def on_mouse_motion( self, x, y, dx, dy ):
-        pass
+        (x,y) = director.get_virtual_coordinates(x,y)
+        for idx,i in enumerate( self.items ):
+            if i.is_inside_box( x, y):
+                self.items[ self.selected_index ].selected = False
+                i.selected = True
+                self.selected_index = idx
             
 
     #
@@ -225,6 +235,32 @@ class MenuItem( object ):
         self.halign = None
         self.valign = None
 
+    def _get_box( self ):
+        """_get_box() -> (x1,y1,x2,y2)
+
+        returns a tuple that contains the margins of the item."""
+       
+        if self.halign == CENTER:
+            x_diff = - self.text.width / 2
+        elif self.halign == RIGHT:
+            x_diff = - self.text.width
+        elif self.halign == LEFT:
+            x_diff = 0
+
+        if self.valign == CENTER:
+            y_diff = - self.text.height/ 2
+        elif self.valign == TOP:
+            y_diff = - self.text.height
+        elif self.valign == BOTTOM:
+            y_diff = 0
+
+        x1 = self.text.x + x_diff
+        y1 = self.text.y + y_diff
+        x2 = x1 + self.text.width
+        y2 = y1 + self.text.height
+        return (x1,y1,x2,y2)
+
+
     def draw( self ):
         if self.selected:
             self.text_selected.draw()
@@ -252,6 +288,17 @@ class MenuItem( object ):
         self.text_selected = font.Text( aFont_selected, self.label, x=x, y=y, halign=self.halign, valign=self.valign )
         self.text_selected.color = self.selected_color
 
+    def is_inside_box( self, x, y ):
+        """is_inside_box( x, y ) -> Boolean
+
+        Returns whether x,y are inside the item."""
+        (ax,ay,bx,by) = self._get_box()
+        if( x >= ax and x <= bx and y >= ay and y <= by ):
+            return True
+        return False
+        
+
+        
 #
 # Item that can be toggled
 #
