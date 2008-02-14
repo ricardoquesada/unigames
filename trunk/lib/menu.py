@@ -71,6 +71,7 @@ class Menu(Scene):
         # Alignment
         self.menu_halign = CENTER
         self.menu_valign = CENTER
+
      
     def _draw_title( self ):
         """ draws the title """
@@ -135,6 +136,7 @@ class Menu(Scene):
         for i in self.items:
             i.draw()
 
+
     def tick( self, dt ):
         for i in self.items:
             i.tick( dt )
@@ -155,7 +157,6 @@ class Menu(Scene):
     #
     def enter( self ):
         director.get_window().push_handlers( self.on_key_press, self.on_mouse_motion, self.on_mouse_release )
-        director.get_window().push_handlers( self.on_key_press )
 
     #
     # Called when the menu will disappear
@@ -197,16 +198,17 @@ class Menu(Scene):
     def on_mouse_release( self, x, y, buttons, modifiers ):
         (x,y) = director.get_virtual_coordinates(x,y)
         if self.items[ self.selected_index ].is_inside_box(x,y):
-            return self.items[ self.selected_index ].on_key_press( key.ENTER, 0 )   # XXX: horrible hack, fixme
+            return self.items[ self.selected_index ].on_key_press( key.ENTER, 0 )   # XXX: hack
 
     def on_mouse_motion( self, x, y, dx, dy ):
         (x,y) = director.get_virtual_coordinates(x,y)
+        self._x = x
+        self._y = y
         for idx,i in enumerate( self.items ):
             if i.is_inside_box( x, y):
                 self.items[ self.selected_index ].selected = False
                 i.selected = True
                 self.selected_index = idx
-            
 
     #
     # Called everytime you press escape

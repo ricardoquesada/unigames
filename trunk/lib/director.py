@@ -42,6 +42,7 @@ class Director( object ):
         self.next_scene = None
         self.show_FPS = True
 
+
     def init( self, *args, **kw ):
         """ init( *args, **kw ) -> None
 
@@ -57,6 +58,8 @@ class Director( object ):
         self.__window_original_res_x = self.__window.width
         self.__window_original_res_y = self.__window.height
         self.__window_aspect =  self.__window.width / float( self.__window.height )
+        self.__offset_x = 0
+        self.__offset_y = 0
 
         self._enable_alpha_blending()
 
@@ -207,10 +210,13 @@ class Director( object ):
         so the "real" coordinates are the coordinates of all the screen.
         """
 
-        x_diff = self.__window_original_res_x / float( self.__window.width )
-        y_diff = self.__window_original_res_y / float( self.__window.height )
+        x_diff = self.__window_original_res_x / float( self.__window.width - self.__offset_x * 2 )
+        y_diff = self.__window_original_res_y / float( self.__window.height - self.__offset_y * 2 )
 
-        return ( int( x_diff * x), int( y_diff * y ) )
+        adjust_x = (self.__window.width * x_diff - self.__window_original_res_x ) / 2
+        adjust_y = (self.__window.height * y_diff - self.__window_original_res_y ) / 2
+
+        return ( int( x_diff * x) - adjust_x,   int( y_diff * y ) - adjust_y )
 
     #
     # window resize handler
@@ -223,10 +229,10 @@ class Director( object ):
             width_aspect = int( height * self.__window_aspect )
             height_aspect = height
 
-        center_x = (width - width_aspect) / 2
-        center_y =  (height - height_aspect) / 2
+        self.__offset_x = (width - width_aspect) / 2
+        self.__offset_y =  (height - height_aspect) / 2
 
-        glViewport(center_x, center_y, width_aspect, height_aspect )
+        glViewport(self.__offset_x, self.__offset_y, width_aspect, height_aspect )
         glMatrixMode(gl.GL_PROJECTION)
         glLoadIdentity()
         glOrtho(0, self.__window_original_res_x, 0, self.__window_original_res_y, -1, 1)

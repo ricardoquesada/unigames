@@ -211,7 +211,7 @@ def run():
 
     font.add_directory('data')
 
-    director.init( caption = "Grossini's Sisters", resizable = False )
+    director.init( caption = "Grossini's Sisters", resizable = True)
     director.run( ( OpenGLTest(),
                     AnimatedSprite(),
                     MultiplexScene(
