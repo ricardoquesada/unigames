@@ -103,6 +103,8 @@ class OptionMenu(Menu):
 
         self.font_title = 'KonQa Black'
         self.font_items = 'You Are Loved'
+        self.menu_valign = menu.BOTTOM
+        self.menu_halign = menu.RIGHT
 
         self.add_item( MenuItem('Fullscreen', self.on_fullscreen) )
         self.add_item( ToggleMenuItem('Show FPS', True, self.on_show_fps) )

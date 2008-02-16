@@ -28,3 +28,4 @@ Some code and ideas were borrowed from:
   . Typus Pocus: http://www.pyweek.org/e/PyAr2/
   . Barbie Seahorse Adventures: http://www.imitationpickles.org/barbie/
   . SteamRun: http://www.pyweek.org/e/Opioid/
+  . Aracaeda: http://www.pyglet.org

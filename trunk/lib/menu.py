@@ -1,7 +1,6 @@
 #
 #
 # Menu class for pyglet
-# riq - 2008
 #
 # Ideas borrowed from:
 #    pygext: http://opioid-interactive.com/~shang/projects/pygext/
